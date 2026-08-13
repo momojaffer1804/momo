@@ -1,10 +1,10 @@
-# MoMo
+# MoMo or Modular Organization & Monitoring Operator
 
-I had too many tabs open. GitHub in one tab, a Pomodoro timer somewhere else, Spotify buried under all of it. I would lose track of the timer, forget upcoming deadlines, and get pulled into whatever tab I opened next. It was not helping me focus, it was just more stuff to check.
+I had too many tabs open. GitHub in one tab, solving leetcode somewhere else, Spotify buried under all of it. I would lose track of the submissions, forget upcoming deadlines, and get pulled into whatever tab I opened next. It was not helping me focus, it was just more stuff to check.
 
 I wanted something that did not need a tab. Something on my desk that I could just glance at.
 
-So I am building **MoMo**. ESP32, small OLED screen, robot face.
+So I am building **MoMo**.
 
 ## Stack
 
@@ -27,6 +27,9 @@ So I am building **MoMo**. ESP32, small OLED screen, robot face.
 - Current focus task
 - Upcoming submission and deadline notifications
 - Robot expressions that react to what is happening
+- What's playing on Spotify
+- GitHub streak
+- Whether today's LeetCode problem is solved
 
 The screens rotate on their own, but I can jump to one directly when I want to check something.
 
