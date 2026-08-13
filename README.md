@@ -33,7 +33,7 @@ So I am building **MoMo**.
 
 The screens rotate on their own, but I can jump to one directly when I want to check something.
 
-## Why this is not just another ESP32 clock
+## Why this is not just another ESP32 desk bot
 
 Most desk display projects are one thing wired to a screen and printing text. That is not really what I wanted to build.
 
