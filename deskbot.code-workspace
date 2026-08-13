@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../deskbot"
+		},
+		{
+			"name": "MoMo",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
