@@ -4,69 +4,64 @@
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
-#define OLED_RESET    -1
+#define OLED_RESET -1
 #define SCREEN_ADDRESS 0x3C
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-// simple eye state
-int eyeHeight = 20;
-bool blinking = false;
 unsigned long lastBlinkTime = 0;
-unsigned long blinkInterval = 3000; // blink every ~3s
+unsigned long blinkInterval = 3000;
 
-void drawEyes(int height) {
+void drawEyes(bool blink) {
+
   display.clearDisplay();
 
-  int eyeWidth = 18;
-  int leftX = 34;
-  int rightX = 76;
-  int centerY = 28;
+  if (blink) {
+    // Closed eyes
+    display.fillRect(25, 31, 30, 4, SSD1306_WHITE);
+    display.fillRect(73, 31, 30, 4, SSD1306_WHITE);
+  }
+  else {
+    // Open eyes
+    display.fillRoundRect(20, 18, 38, 30, 8, SSD1306_WHITE);
+    display.fillRoundRect(70, 18, 38, 30, 8, SSD1306_WHITE);
 
-  // two rounded-rect eyes, height changes to simulate blinking
-  display.fillRoundRect(leftX - eyeWidth/2, centerY - height/2, eyeWidth, height, 4, SSD1306_WHITE);
-  display.fillRoundRect(rightX - eyeWidth/2, centerY - height/2, eyeWidth, height, 4, SSD1306_WHITE);
-
-  display.setTextSize(1);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(30, 54);
-  display.print("HELLO");
+    // Pupils
+    display.fillCircle(39, 33, 7, SSD1306_BLACK);
+    display.fillCircle(89, 33, 7, SSD1306_BLACK);
+  }
 
   display.display();
 }
 
 void setup() {
+
   Serial.begin(115200);
 
+  Wire.begin(21, 22);
+
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    while (true); // halt if OLED not found
+    Serial.println("OLED not found!");
+    while (true);
   }
 
-  display.clearDisplay();
-  drawEyes(eyeHeight);
+  drawEyes(false);
 }
 
 void loop() {
+
   unsigned long now = millis();
 
-  // trigger a blink every few seconds
-  if (!blinking && now - lastBlinkTime > blinkInterval) {
-    blinking = true;
-    lastBlinkTime = now;
-  }
+  if (now - lastBlinkTime > blinkInterval) {
 
-  if (blinking) {
-    // quick blink animation: shrink eyes then grow back
-    for (int h = 20; h >= 2; h -= 4) {
-      drawEyes(h);
-      delay(20);
-    }
-    for (int h = 2; h <= 20; h += 4) {
-      drawEyes(h);
-      delay(20);
-    }
-    blinking = false;
+    // Close eyes
+    drawEyes(true);
+    delay(150);
+
+    // Open eyes
+    drawEyes(false);
+
+    lastBlinkTime = now;
   }
 
   delay(50);
