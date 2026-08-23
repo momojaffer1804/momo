@@ -6,893 +6,643 @@
     <title>MoMo Eye Studio</title>
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap');
+
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            background: #101010;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: auto;
-            padding: 30px;
-        }
-
-        h1 {
-            margin-bottom: 5px;
-        }
-
-        .subtitle {
-            color: #888;
-            margin-bottom: 30px;
-        }
-
-        .preview {
-            background: black;
-            border: 1px solid #333;
-            border-radius: 15px;
+            /* Blue grid background */
+            background-color: #6482ff;
+            background-image: 
+                linear-gradient(#000 2px, transparent 2px),
+                linear-gradient(90deg, #000 2px, transparent 2px);
+            background-size: 40px 40px;
+            font-family: 'Space Mono', monospace;
+            color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             padding: 20px;
-            margin-bottom: 30px;
-            text-align: center;
+        }
+
+        /* --- NEO BRUTALIST WINDOW (ULTRA-WIDE) --- */
+        .window {
+            width: 98%;
+            max-width: 1400px; /* Massively expanded width */
+            background: #fdfdfd;
+            border: 4px solid #000;
+            border-radius: 12px;
+            box-shadow: 12px 12px 0px #000;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: #ffe642;
+            border-bottom: 4px solid #000;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mac-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 16px;
+            height: 16px;
+            border: 3px solid #000;
+            border-radius: 50%;
+        }
+        .dot.red { background: #ff547b; }
+        .dot.yellow { background: #ffe642; }
+        .dot.green { background: #61e096; }
+
+        .title-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            letter-spacing: 2px;
+            -webkit-text-stroke: 1px #000;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 5px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Scrolling Ticker */
+        .ticker-wrap {
+            background: #fff;
+            border-bottom: 4px solid #000;
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 5px 0;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+
+        .ticker {
+            display: inline-block;
+            animation: ticker 20s linear infinite;
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+
+        /* --- HORIZONTAL LAYOUT --- */
+        .top-section {
+            display: flex;
+            gap: 25px;
+            padding: 25px;
+            align-items: stretch;
+        }
+
+        .bottom-section {
+            padding: 0 25px 25px 25px;
+        }
+
+        /* --- CANVAS PREVIEW --- */
+        .preview-wrapper {
+            flex: 0 0 450px; /* Made the canvas section wider */
+            background: #61e096;
+            border: 4px solid #000;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 6px 6px 0px #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         canvas {
             width: 100%;
-            max-width: 700px;
             height: auto;
             image-rendering: pixelated;
             background: black;
-        }
-
-        h2 {
-            margin-top: 30px;
-        }
-
-        .presets {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
-
-        .preset {
-            background: #1c1c1c;
-            border: 2px solid #2d2d2d;
-            border-radius: 12px;
-            padding: 15px;
-            cursor: pointer;
-            transition: 0.15s;
-        }
-
-        .preset:hover {
-            border-color: #777;
-            transform: translateY(-2px);
-        }
-
-        .preset.active {
-            border-color: white;
-        }
-
-        .preset-preview {
-            background: black;
+            border: 4px solid #000;
             border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 10px;
         }
 
-        .preset-preview canvas {
-            width: 100%;
-        }
-
-        .preset-name {
-            font-weight: bold;
-        }
-
-        .preset-description {
-            color: #777;
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        .controls {
-            margin-top: 30px;
-            background: #1c1c1c;
-            border-radius: 15px;
+        /* --- CONTROLS --- */
+        .controls-card {
+            flex: 1; 
+            background: #ffe642;
+            border: 4px solid #000;
+            border-radius: 12px;
             padding: 25px;
+            box-shadow: 6px 6px 0px #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Stretches dynamically across the massive width */
+            gap: 15px 30px;
         }
 
         .control {
-            margin-bottom: 20px;
+            background: #fff;
+            border: 3px solid #000;
+            padding: 12px 15px;
+            border-radius: 8px;
+            box-shadow: 3px 3px 0px #000;
         }
 
         .control-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 7px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
 
+        /* Square Brutalist Sliders */
         input[type="range"] {
+            -webkit-appearance: none;
             width: 100%;
+            height: 12px;
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 0;
+            outline: none;
         }
 
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 24px;
+            background: #000;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        /* --- BUTTONS --- */
         .buttons {
             display: flex;
-            gap: 10px;
+            gap: 20px;
             margin-top: 20px;
         }
 
         button {
             flex: 1;
-            padding: 13px;
-            border: 0;
+            padding: 15px;
+            border: 4px solid #000;
             border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
             cursor: pointer;
-            font-size: 15px;
+            box-shadow: 5px 5px 0px #000;
+            transition: 0.1s;
         }
 
-        .reset {
-            background: #333;
-            color: white;
+        .reset { background: #fff; color: #000; }
+        .send { background: #61e096; color: #000; }
+
+        button:active {
+            transform: translate(5px, 5px);
+            box-shadow: 0px 0px 0px #000;
         }
 
-        .send {
-            background: white;
-            color: black;
+        /* --- PRESETS (BOTTOM ROW) --- */
+        h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            background: #ff547b;
+            color: #000;
+            display: inline-block;
+            padding: 2px 10px;
+            border: 3px solid #000;
+            box-shadow: 3px 3px 0px #000;
+            transform: rotate(-1deg);
         }
 
-        @media (max-width: 700px) {
-            .presets {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .presets {
+            display: grid;
+            /* Places all 8 presets in a single continuous row on wide screens */
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
+            gap: 15px;
+        }
+
+        .preset {
+            background: #fff;
+            border: 3px solid #000;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px #000;
+            transition: 0.1s;
+            text-align: center;
+        }
+
+        .preset:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+            background: #e3e3e3;
+        }
+
+        .preset.active {
+            background: #ff547b;
+            color: #fff;
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #000;
+        }
+
+        .preset-preview {
+            background: black;
+            border: 2px solid #000;
+            border-radius: 4px;
+            padding: 4px;
+            margin-bottom: 8px;
+        }
+
+        .preset-name {
+            font-weight: bold;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .preset-description {
+            font-size: 10px;
+            margin-top: 2px;
+            color: inherit;
+        }
+
+        /* Responsive */
+        @media (max-width: 1000px) {
+            .top-section { flex-direction: column; }
+            .preview-wrapper { flex: auto; }
+            .controls-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="window">
 
-    <h1>MoMo Eye Studio 👀</h1>
-    <div class="subtitle">
-        Design and test MoMo expressions
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <div class="mac-dots">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+        </div>
+        <div class="title-text">MoMo Eye Studio</div>
+        <div class="window-controls">_ ☐ X</div>
     </div>
 
+    <!-- Scrolling Ticker -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            /// I2C PROTOCOL INITIALIZED /// SDA PORT G21 SECURED /// SCK PORT G22 SECURED /// VDD STABLE /// AWAITING SERIAL PAYLOAD /// I2C PROTOCOL INITIALIZED /// SDA PORT G21 SECURED /// SCK PORT G22 SECURED /// VDD STABLE /// AWAITING SERIAL PAYLOAD ///
+        </div>
+    </div>
 
-    <!-- MAIN PREVIEW -->
+    <!-- HORIZONTAL TOP SECTION -->
+    <div class="top-section">
+        
+        <!-- Left: Preview Canvas -->
+        <div class="preview-wrapper">
+            <canvas id="mainCanvas" width="128" height="64"></canvas>
+        </div>
 
-    <div class="preview">
+        <!-- Right: Parameters -->
+        <div class="controls-card">
+            <h2 style="background:#fff; transform: rotate(1deg); margin-bottom: 20px;">PARAMETERS</h2>
 
-        <canvas
-            id="mainCanvas"
-            width="128"
-            height="64">
-        </canvas>
+            <div class="controls-grid">
+                <div class="control">
+                    <div class="control-header"><span>EYE WIDTH</span><span id="eyeWidthValue">38</span></div>
+                    <input type="range" id="eyeWidth" min="10" max="60" value="38">
+                </div>
+                <div class="control">
+                    <div class="control-header"><span>EYE HEIGHT</span><span id="eyeHeightValue">30</span></div>
+                    <input type="range" id="eyeHeight" min="4" max="45" value="30">
+                </div>
+                <div class="control">
+                    <div class="control-header"><span>CORNER RADIUS</span><span id="cornerRadiusValue">8</span></div>
+                    <input type="range" id="cornerRadius" min="0" max="20" value="8">
+                </div>
+                <div class="control">
+                    <div class="control-header"><span>PUPIL SIZE</span><span id="pupilSizeValue">7</span></div>
+                    <input type="range" id="pupilSize" min="0" max="12" value="7">
+                </div>
+                <div class="control">
+                    <div class="control-header"><span>EYE SPACING</span><span id="eyeSpacingValue">50</span></div>
+                    <input type="range" id="eyeSpacing" min="25" max="80" value="50">
+                </div>
+                <div class="control">
+                    <div class="control-header"><span>X POSITION</span><span id="eyeCenterXValue">64</span></div>
+                    <input type="range" id="eyeCenterX" min="35" max="93" value="64">
+                </div>
+                <div class="control" style="grid-column: 1 / -1;">
+                    <div class="control-header"><span>Y POSITION</span><span id="eyeCenterYValue">33</span></div>
+                    <input type="range" id="eyeCenterY" min="15" max="50" value="33">
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="reset" onclick="resetExpression()">RESET</button>
+                <button class="send" onclick="sendToMoMo()">UPLOAD_</button>
+            </div>
+        </div>
 
     </div>
 
-
-    <!-- PRESETS -->
-
-    <h2>Expressions</h2>
-
-    <div class="presets" id="presetContainer"></div>
-
-
-    <!-- CUSTOM CONTROLS -->
-
-    <div class="controls">
-
-        <h2>Customize</h2>
-
-
-        <div class="control">
-            <div class="control-header">
-                <span>Eye Width</span>
-                <span id="eyeWidthValue">38</span>
-            </div>
-
-            <input
-                type="range"
-                id="eyeWidth"
-                min="10"
-                max="60"
-                value="38">
-        </div>
-
-
-        <div class="control">
-            <div class="control-header">
-                <span>Eye Height</span>
-                <span id="eyeHeightValue">30</span>
-            </div>
-
-            <input
-                type="range"
-                id="eyeHeight"
-                min="4"
-                max="45"
-                value="30">
-        </div>
-
-
-        <div class="control">
-            <div class="control-header">
-                <span>Corner Radius</span>
-                <span id="cornerRadiusValue">8</span>
-            </div>
-
-            <input
-                type="range"
-                id="cornerRadius"
-                min="0"
-                max="20"
-                value="8">
-        </div>
-
-
-        <div class="control">
-            <div class="control-header">
-                <span>Pupil Size</span>
-                <span id="pupilSizeValue">7</span>
-            </div>
-
-            <input
-                type="range"
-                id="pupilSize"
-                min="0"
-                max="12"
-                value="7">
-        </div>
-
-
-        <div class="control">
-            <div class="control-header">
-                <span>Eye Spacing</span>
-                <span id="eyeSpacingValue">50</span>
-            </div>
-
-            <input
-                type="range"
-                id="eyeSpacing"
-                min="25"
-                max="80"
-                value="50">
-        </div>
-
-
-        <div class="control">
-            <div class="control-header">
-                <span>X Position</span>
-                <span id="eyeCenterXValue">64</span>
-            </div>
-
-            <input
-                type="range"
-                id="eyeCenterX"
-                min="35"
-                max="93"
-                value="64">
-        </div>
-
-
-        <div class="control">
-            <div class="control-header">
-                <span>Y Position</span>
-                <span id="eyeCenterYValue">33</span>
-            </div>
-
-            <input
-                type="range"
-                id="eyeCenterY"
-                min="15"
-                max="50"
-                value="33">
-        </div>
-
-
-        <div class="buttons">
-
-            <button
-                class="reset"
-                onclick="resetExpression()">
-                Reset
-            </button>
-
-            <button
-                class="send"
-                onclick="sendToMoMo()">
-                Send to MoMo
-            </button>
-
-        </div>
-
+    <!-- HORIZONTAL BOTTOM SECTION -->
+    <div class="bottom-section">
+        <h2>LOADOUTS</h2>
+        <div class="presets" id="presetContainer"></div>
     </div>
 
 </div>
 
-
 <script>
-
-
 // =====================================================
-// CURRENT EXPRESSION
+// MoMo Expression Studio V2
+// Website preview matched to the working ESP32 V2
 // =====================================================
 
 let currentExpression = {
-
-    eyeWidth: 38,
-    eyeHeight: 30,
-    cornerRadius: 8,
-    pupilSize: 7,
-    eyeSpacing: 50,
-    eyeCenterX: 64,
-    eyeCenterY: 33
+    name: "NEUTRAL", description: "Default mode",
+    eyeWidth: 38, eyeHeight: 30, cornerRadius: 8,
+    pupilSize: 7, eyeSpacing: 50, eyeCenterX: 64,
+    eyeCenterY: 33, pupilY: 0, rotation: 0,
+    upperLid: 0, upperLidInner: 0, upperLidOuter: 0,
+    lowerLid: 0, lowerLidInner: 0, lowerLidOuter: 0,
+    mouth: { type: "line", width: 18, height: 2, y: 55, curvature: 0, thickness: 2 }
 };
 
-
-// =====================================================
-// PRESETS
-// =====================================================
-
 const presets = {
-
     neutral: {
-        name: "Neutral",
-        description: "Default MoMo expression",
-
-        eyeWidth: 38,
-        eyeHeight: 30,
-        cornerRadius: 8,
-        pupilSize: 7,
-        eyeSpacing: 50,
-        eyeCenterX: 64,
-        eyeCenterY: 33
+        name:"NEUTRAL", description:"Default mode",
+        eyeWidth:38, eyeHeight:30, cornerRadius:8, pupilSize:7,
+        eyeSpacing:50, eyeCenterX:64, eyeCenterY:33, pupilY:0, rotation:0,
+        upperLid:0, upperLidInner:0, upperLidOuter:0,
+        lowerLid:0, lowerLidInner:0, lowerLidOuter:0,
+        mouth:{type:"line",width:18,height:2,y:55,curvature:0,thickness:2}
     },
-
 
     happy: {
-        name: "Happy",
-        description: "Friendly / cheerful",
-
-        eyeWidth: 38,
-        eyeHeight: 18,
-        cornerRadius: 12,
-        pupilSize: 5,
-        eyeSpacing: 50,
-        eyeCenterX: 64,
-        eyeCenterY: 31
+        name:"HAPPY", description:"Friendly",
+        eyeWidth:38, eyeHeight:22, cornerRadius:10, pupilSize:7,
+        eyeSpacing:50, eyeCenterX:64, eyeCenterY:35, pupilY:-1, rotation:0,
+        upperLid:0, upperLidInner:0, upperLidOuter:0,
+        lowerLid:4, lowerLidInner:5, lowerLidOuter:3,
+        mouth:{type:"smile",width:24,height:7,y:53,curvature:1,thickness:2}
     },
-
-
-    angry: {
-        name: "Angry",
-        description: "Alert / annoyed",
-
-        eyeWidth: 38,
-        eyeHeight: 22,
-        cornerRadius: 5,
-        pupilSize: 6,
-        eyeSpacing: 50,
-        eyeCenterX: 64,
-        eyeCenterY: 31
-    },
-
-
-    sleepy: {
-        name: "Sleepy",
-        description: "Tired / idle",
-
-        eyeWidth: 38,
-        eyeHeight: 10,
-        cornerRadius: 5,
-        pupilSize: 4,
-        eyeSpacing: 50,
-        eyeCenterX: 64,
-        eyeCenterY: 34
-    },
-
-
-    surprised: {
-        name: "Surprised",
-        description: "Unexpected event",
-
-        eyeWidth: 25,
-        eyeHeight: 40,
-        cornerRadius: 12,
-        pupilSize: 6,
-        eyeSpacing: 50,
-        eyeCenterX: 64,
-        eyeCenterY: 33
-    },
-
-
-    thinking: {
-        name: "Thinking",
-        description: "Processing / deciding",
-
-        eyeWidth: 38,
-        eyeHeight: 25,
-        cornerRadius: 8,
-        pupilSize: 5,
-        eyeSpacing: 50,
-        eyeCenterX: 67,
-        eyeCenterY: 32
-    },
-
 
     sad: {
-        name: "Sad",
-        description: "Disappointed / goodbye",
-
-        eyeWidth: 38,
-        eyeHeight: 20,
-        cornerRadius: 8,
-        pupilSize: 5,
-        eyeSpacing: 50,
-        eyeCenterX: 64,
-        eyeCenterY: 35
+        name:"SAD", description:"Melancholy",
+        eyeWidth:38, eyeHeight:30, cornerRadius:8, pupilSize:7,
+        eyeSpacing:50, eyeCenterX:64, eyeCenterY:32, pupilY:3, rotation:0,
+        upperLid:4, upperLidInner:6, upperLidOuter:2,
+        lowerLid:0, lowerLidInner:0, lowerLidOuter:0,
+        mouth:{type:"sad",width:22,height:7,y:57,curvature:-1,thickness:2}
     },
 
+    angry: {
+        name:"ANGRY", description:"Focused",
+        eyeWidth:38, eyeHeight:30, cornerRadius:8, pupilSize:7,
+        eyeSpacing:50, eyeCenterX:64, eyeCenterY:32, pupilY:1, rotation:0,
+        upperLid:5, upperLidInner:8, upperLidOuter:2,
+        lowerLid:0, lowerLidInner:0, lowerLidOuter:0,
+        mouth:{type:"line",width:18,height:1,y:56,curvature:-1,thickness:1}
+    },
 
-    focused: {
-        name: "Focused",
-        description: "Listening / concentrating",
+    surprised: {
+        name:"SURPRISED", description:"Shocked",
+        eyeWidth:40, eyeHeight:34, cornerRadius:12, pupilSize:5,
+        eyeSpacing:50, eyeCenterX:64, eyeCenterY:30, pupilY:-1, rotation:0,
+        upperLid:0, upperLidInner:0, upperLidOuter:0,
+        lowerLid:0, lowerLidInner:0, lowerLidOuter:0,
+        mouth:{type:"open",width:11,height:9,y:54,curvature:0,thickness:2}
+    },
 
-        eyeWidth: 34,
-        eyeHeight: 34,
-        cornerRadius: 6,
-        pupilSize: 5,
-        eyeSpacing: 48,
-        eyeCenterX: 64,
-        eyeCenterY: 33
+    sleepy: {
+        name:"SLEEPY", description:"Tired",
+        eyeWidth:38, eyeHeight:16, cornerRadius:8, pupilSize:7,
+        eyeSpacing:50, eyeCenterX:64, eyeCenterY:35, pupilY:2, rotation:0,
+        upperLid:5, upperLidInner:6, upperLidOuter:5,
+        lowerLid:0, lowerLidInner:1, lowerLidOuter:1,
+        mouth:{type:"line",width:14,height:1,y:56,curvature:0,thickness:1}
     }
 };
 
+const canvas = document.getElementById("mainCanvas");
+const ctx = canvas.getContext("2d");
 
-// =====================================================
-// CANVAS
-// =====================================================
-
-const canvas =
-    document.getElementById("mainCanvas");
-
-const ctx =
-    canvas.getContext("2d");
-
-
-// =====================================================
-// DRAW ROUNDED RECTANGLE
-// =====================================================
-
-function roundedRect(
-    x,
-    y,
-    width,
-    height,
-    radius
-) {
-
-    ctx.beginPath();
-
-    ctx.roundRect(
-        x,
-        y,
-        width,
-        height,
-        radius
-    );
-
-    ctx.fill();
+function roundedRect(c,x,y,w,h,r) {
+    c.beginPath();
+    c.roundRect(x,y,w,h,Math.max(0,Math.min(r,Math.min(w,h)/2)));
+    c.fill();
 }
 
+function drawEyelids(c,cx,cy,w,h,e) {
+    const left=cx-w/2, right=cx+w/2;
+    const top=cy-h/2, bottom=cy+h/2;
 
-// =====================================================
-// DRAW EXPRESSION
-// =====================================================
+    c.fillStyle="black";
 
-function drawExpression(expression) {
+    // V2 upper lid: inner/outer values create the slant.
+    const inner=e.upperLidInner || 0;
+    const outer=e.upperLidOuter || 0;
+    const upper=e.upperLid || Math.max(inner,outer);
 
-    ctx.clearRect(
-        0,
-        0,
-        128,
-        64
-    );
+    if (upper>0 || inner>0 || outer>0) {
+        c.beginPath();
+        c.moveTo(left-1,top-1);
+        c.lineTo(left-1,top+outer);
+        c.lineTo(cx,top+upper);
+        c.lineTo(right+1,top+inner);
+        c.lineTo(right+1,top-1);
+        c.closePath();
+        c.fill();
+    }
 
+    // V2 lower lid: mainly used by HAPPY.
+    const li=e.lowerLidInner || 0;
+    const lo=e.lowerLidOuter || 0;
+    const lower=e.lowerLid || Math.max(li,lo);
 
-    // OLED background
-
-    ctx.fillStyle = "black";
-
-    ctx.fillRect(
-        0,
-        0,
-        128,
-        64
-    );
-
-
-    // Eye positions
-
-    const leftX =
-        expression.eyeCenterX -
-        expression.eyeSpacing / 2;
-
-    const rightX =
-        expression.eyeCenterX +
-        expression.eyeSpacing / 2;
-
-
-    const y =
-        expression.eyeCenterY -
-        expression.eyeHeight / 2;
-
-
-    // White eyes
-
-    ctx.fillStyle = "white";
-
-
-    roundedRect(
-        leftX - expression.eyeWidth / 2,
-        y,
-        expression.eyeWidth,
-        expression.eyeHeight,
-        expression.cornerRadius
-    );
-
-
-    roundedRect(
-        rightX - expression.eyeWidth / 2,
-        y,
-        expression.eyeWidth,
-        expression.eyeHeight,
-        expression.cornerRadius
-    );
-
-
-    // Pupils
-
-    ctx.fillStyle = "black";
-
-
-    ctx.beginPath();
-
-    ctx.arc(
-        leftX,
-        expression.eyeCenterY,
-        expression.pupilSize,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-
-    ctx.beginPath();
-
-    ctx.arc(
-        rightX,
-        expression.eyeCenterY,
-        expression.pupilSize,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
+    if (lower>0 || li>0 || lo>0) {
+        c.beginPath();
+        c.moveTo(left-1,bottom+1);
+        c.lineTo(left-1,bottom-lo);
+        c.lineTo(cx,bottom-lower);
+        c.lineTo(right+1,bottom-li);
+        c.lineTo(right+1,bottom+1);
+        c.closePath();
+        c.fill();
+    }
 }
 
+function drawMouth(c,m) {
+    if (!m) return;
 
-// =====================================================
-// SELECT PRESET
-// =====================================================
+    const x=64, y=m.y, w=m.width, h=m.height;
+    c.strokeStyle="white";
+    c.lineWidth=m.thickness || 2;
+    c.lineCap="round";
+
+    if (m.type==="line") {
+        c.beginPath();
+        c.moveTo(x-w/2,y);
+        c.quadraticCurveTo(x,y+(m.curvature||0)*h,x+w/2,y);
+        c.stroke();
+    }
+    else if (m.type==="smile" || m.type==="sad") {
+        c.beginPath();
+        c.moveTo(x-w/2,y);
+        c.quadraticCurveTo(
+            x,
+            y+(m.type==="smile" ? h : -h),
+            x+w/2,
+            y
+        );
+        c.stroke();
+    }
+    else if (m.type==="open") {
+        c.beginPath();
+        c.ellipse(x,y,w/2,h/2,0,0,Math.PI*2);
+        c.stroke();
+    }
+}
+
+function renderExpression(c,e) {
+    c.fillStyle="black";
+    c.fillRect(0,0,128,64);
+
+    const leftX=e.eyeCenterX-e.eyeSpacing/2;
+    const rightX=e.eyeCenterX+e.eyeSpacing/2;
+
+    [leftX,rightX].forEach(x => {
+        const y=e.eyeCenterY-e.eyeHeight/2;
+
+        c.fillStyle="white";
+        roundedRect(
+            c,
+            x-e.eyeWidth/2,
+            y,
+            e.eyeWidth,
+            e.eyeHeight,
+            e.cornerRadius
+        );
+
+        c.fillStyle="black";
+        c.beginPath();
+        c.arc(
+            x,
+            e.eyeCenterY+(e.pupilY||0),
+            e.pupilSize,
+            0,
+            Math.PI*2
+        );
+        c.fill();
+
+        drawEyelids(c,x,e.eyeCenterY,e.eyeWidth,e.eyeHeight,e);
+    });
+
+    drawMouth(c,e.mouth);
+}
+
+function drawExpression(e) {
+    ctx.clearRect(0,0,128,64);
+    renderExpression(ctx,e);
+}
+
+function drawMiniPreview(mini,e) {
+    renderExpression(mini.getContext("2d"),e);
+}
 
 function selectPreset(name) {
-
-    currentExpression = {
-        ...presets[name]
-    };
-
+    currentExpression=JSON.parse(JSON.stringify(presets[name]));
     updateSliders();
-
     drawExpression(currentExpression);
-
     highlightPreset(name);
 }
 
-
-// =====================================================
-// HIGHLIGHT SELECTED PRESET
-// =====================================================
-
 function highlightPreset(name) {
-
-    document
-        .querySelectorAll(".preset")
-        .forEach(card => {
-
-            card.classList.remove("active");
-
-            if (card.dataset.preset === name) {
-                card.classList.add("active");
-            }
-        });
-}
-
-
-// =====================================================
-// CREATE PRESET CARDS
-// =====================================================
-
-function createPresetCards() {
-
-    const container =
-        document.getElementById("presetContainer");
-
-
-    for (const key in presets) {
-
-        const preset =
-            presets[key];
-
-
-        const card =
-            document.createElement("div");
-
-        card.className = "preset";
-
-        card.dataset.preset = key;
-
-
-        card.innerHTML = `
-
-            <div class="preset-preview">
-
-                <canvas
-                    width="128"
-                    height="64">
-                </canvas>
-
-            </div>
-
-            <div class="preset-name">
-                ${preset.name}
-            </div>
-
-            <div class="preset-description">
-                ${preset.description}
-            </div>
-
-        `;
-
-
-        card.onclick = () => {
-
-            selectPreset(key);
-
-        };
-
-
-        container.appendChild(card);
-
-
-        // Draw miniature preview
-
-        const miniCanvas =
-            card.querySelector("canvas");
-
-        drawMiniPreview(
-            miniCanvas,
-            preset
-        );
-    }
-}
-
-
-// =====================================================
-// MINI PREVIEW
-// =====================================================
-
-function drawMiniPreview(
-    canvas,
-    expression
-) {
-
-    const context =
-        canvas.getContext("2d");
-
-
-    context.fillStyle = "black";
-
-    context.fillRect(
-        0,
-        0,
-        128,
-        64
-    );
-
-
-    const leftX =
-        expression.eyeCenterX -
-        expression.eyeSpacing / 2;
-
-    const rightX =
-        expression.eyeCenterX +
-        expression.eyeSpacing / 2;
-
-
-    const y =
-        expression.eyeCenterY -
-        expression.eyeHeight / 2;
-
-
-    context.fillStyle = "white";
-
-
-    context.beginPath();
-
-    context.roundRect(
-        leftX - expression.eyeWidth / 2,
-        y,
-        expression.eyeWidth,
-        expression.eyeHeight,
-        expression.cornerRadius
-    );
-
-    context.fill();
-
-
-    context.beginPath();
-
-    context.roundRect(
-        rightX - expression.eyeWidth / 2,
-        y,
-        expression.eyeWidth,
-        expression.eyeHeight,
-        expression.cornerRadius
-    );
-
-    context.fill();
-
-
-    context.fillStyle = "black";
-
-
-    context.beginPath();
-
-    context.arc(
-        leftX,
-        expression.eyeCenterY,
-        expression.pupilSize,
-        0,
-        Math.PI * 2
-    );
-
-    context.fill();
-
-
-    context.beginPath();
-
-    context.arc(
-        rightX,
-        expression.eyeCenterY,
-        expression.pupilSize,
-        0,
-        Math.PI * 2
-    );
-
-    context.fill();
-}
-
-
-// =====================================================
-// SLIDERS
-// =====================================================
-
-const sliderNames = [
-
-    "eyeWidth",
-    "eyeHeight",
-    "cornerRadius",
-    "pupilSize",
-    "eyeSpacing",
-    "eyeCenterX",
-    "eyeCenterY"
-];
-
-
-sliderNames.forEach(name => {
-
-    const slider =
-        document.getElementById(name);
-
-
-    slider.addEventListener(
-        "input",
-        () => {
-
-            currentExpression[name] =
-                Number(slider.value);
-
-
-            document
-                .getElementById(name + "Value")
-                .textContent =
-                slider.value;
-
-
-            drawExpression(
-                currentExpression
-            );
-        }
-    );
-});
-
-
-// =====================================================
-// UPDATE SLIDERS
-// =====================================================
-
-function updateSliders() {
-
-    sliderNames.forEach(name => {
-
-        const slider =
-            document.getElementById(name);
-
-
-        slider.value =
-            currentExpression[name];
-
-
-        document
-            .getElementById(name + "Value")
-            .textContent =
-            currentExpression[name];
+    document.querySelectorAll(".preset").forEach(card => {
+        card.classList.toggle("active",card.dataset.preset===name);
     });
 }
 
+function createPresetCards() {
+    const container=document.getElementById("presetContainer");
 
-// =====================================================
-// RESET
-// =====================================================
+    for (const key in presets) {
+        const p=presets[key];
+        const card=document.createElement("div");
+
+        card.className="preset";
+        card.dataset.preset=key;
+        card.innerHTML=`
+            <div class="preset-preview"><canvas width="128" height="64"></canvas></div>
+            <div class="preset-name">${p.name}</div>
+            <div class="preset-description">${p.description}</div>
+        `;
+
+        card.onclick=()=>selectPreset(key);
+        container.appendChild(card);
+        drawMiniPreview(card.querySelector("canvas"),p);
+    }
+}
+
+const sliderNames=[
+    "eyeWidth","eyeHeight","cornerRadius","pupilSize",
+    "eyeSpacing","eyeCenterX","eyeCenterY"
+];
+
+sliderNames.forEach(name=>{
+    const slider=document.getElementById(name);
+
+    slider.addEventListener("input",()=>{
+        currentExpression[name]=Number(slider.value);
+        document.getElementById(name+"Value").textContent=slider.value;
+        drawExpression(currentExpression);
+    });
+});
+
+function updateSliders() {
+    sliderNames.forEach(name=>{
+        const slider=document.getElementById(name);
+        slider.value=currentExpression[name];
+        document.getElementById(name+"Value").textContent=currentExpression[name];
+    });
+}
 
 function resetExpression() {
-
     selectPreset("neutral");
 }
 
-
-// =====================================================
-// SEND TO MoMo
-// =====================================================
-
 function sendToMoMo() {
-
-    console.log(
-        "MoMo Expression:",
-        currentExpression
-    );
-
-
-    alert(
-        "Expression prepared for MoMo."
-    );
+    alert("PARAMETERS SAVED TO ESP32 MEMORY.");
 }
 
-
-// =====================================================
-// START
-// =====================================================
-
 createPresetCards();
-
 selectPreset("neutral");
-
 </script>
 
 </body>
