@@ -1,0 +1,170 @@
+import os
+import time
+
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+from dotenv import load_dotenv
+
+
+# =====================================================
+# Configuration
+# =====================================================
+
+load_dotenv()
+
+CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
+REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI")
+
+if not CLIENT_ID or not CLIENT_SECRET or not REDIRECT_URI:
+    raise RuntimeError(
+        "Missing Spotify credentials. "
+        "Check your .env file."
+    )
+
+
+# =====================================================
+# Spotify Authentication
+# =====================================================
+
+scope = (
+    "user-read-currently-playing "
+    "user-read-playback-state"
+)
+
+sp = spotipy.Spotify(
+    auth_manager=SpotifyOAuth(
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        redirect_uri=REDIRECT_URI,
+        scope=scope,
+        open_browser=True,
+    )
+)
+
+
+# =====================================================
+# Get Current Track
+# =====================================================
+
+def get_current_track():
+
+    current = sp.current_playback()
+
+    if current is None or current.get("item") is None:
+        return None
+
+    track = current["item"]
+
+    return {
+        "name": track["name"],
+        "artist": ", ".join(
+            artist["name"]
+            for artist in track["artists"]
+        ),
+        "album": track["album"]["name"],
+        "is_playing": current["is_playing"],
+        "progress_ms": current["progress_ms"],
+        "duration_ms": track["duration_ms"],
+    }
+
+
+# =====================================================
+# Display Track
+# =====================================================
+
+def display_track(track):
+
+    if track is None:
+        print("\nNothing is currently playing.")
+        return
+
+    progress = track["progress_ms"] / 1000
+    duration = track["duration_ms"] / 1000
+
+    status = (
+        "PLAYING"
+        if track["is_playing"]
+        else "PAUSED"
+    )
+
+    print()
+    print("========== MoMo Spotify ==========")
+    print(f"Song     : {track['name']}")
+    print(f"Artist   : {track['artist']}")
+    print(f"Album    : {track['album']}")
+    print(f"Status   : {status}")
+    print(
+        f"Progress : "
+        f"{progress:.0f}s / {duration:.0f}s"
+    )
+    print("==================================")
+
+
+# =====================================================
+# Spotify Monitor
+# =====================================================
+
+def monitor_spotify():
+
+    print()
+    print("==================================")
+    print("      MoMo Spotify Monitor")
+    print("==================================")
+    print("Monitoring Spotify...")
+    print("Press CTRL+C to stop.")
+    print()
+
+    last_track = None
+    last_playing = None
+
+    while True:
+
+        try:
+
+            track = get_current_track()
+
+            if track is None:
+
+                if last_track is not None:
+                    print("\nNothing is currently playing.")
+
+                last_track = None
+                last_playing = None
+
+            else:
+
+                track_changed = (
+                    last_track != track["name"]
+                    or last_playing != track["is_playing"]
+                )
+
+                if track_changed:
+                    display_track(track)
+
+                    last_track = track["name"]
+                    last_playing = track["is_playing"]
+
+            time.sleep(2)
+
+        except KeyboardInterrupt:
+
+            print("\n")
+            print("Spotify monitor stopped.")
+            break
+
+        except Exception as error:
+
+            print()
+            print(f"Spotify error: {error}")
+            print("Retrying in 5 seconds...")
+
+            time.sleep(5)
+
+
+# =====================================================
+# Main
+# =====================================================
+
+if __name__ == "__main__":
+    monitor_spotify()
