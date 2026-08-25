@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>MoMo Eye Studio</title>
 
     <style>
@@ -15,9 +16,8 @@
         }
 
         body {
-            /* Blue grid background */
             background-color: #6482ff;
-            background-image: 
+            background-image:
                 linear-gradient(#000 2px, transparent 2px),
                 linear-gradient(90deg, #000 2px, transparent 2px);
             background-size: 40px 40px;
@@ -30,19 +30,16 @@
             padding: 20px;
         }
 
-        /* --- NEO BRUTALIST WINDOW (ULTRA-WIDE) --- */
         .window {
             width: 98%;
-            max-width: 1400px; /* Massively expanded width */
+            max-width: 1300px;
             background: #fdfdfd;
             border: 4px solid #000;
             border-radius: 12px;
             box-shadow: 12px 12px 0px #000;
             overflow: hidden;
-            position: relative;
         }
 
-        /* Title Bar */
         .title-bar {
             background: #ffe642;
             border-bottom: 4px solid #000;
@@ -63,25 +60,25 @@
             border: 3px solid #000;
             border-radius: 50%;
         }
-        .dot.red { background: #ff547b; }
-        .dot.yellow { background: #ffe642; }
-        .dot.green { background: #61e096; }
+
+        .dot.red {
+            background: #ff547b;
+        }
+
+        .dot.yellow {
+            background: #ffe642;
+        }
+
+        .dot.green {
+            background: #61e096;
+        }
 
         .title-text {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 24px;
             letter-spacing: 2px;
-            -webkit-text-stroke: 1px #000;
         }
 
-        .window-controls {
-            display: flex;
-            gap: 5px;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        /* Scrolling Ticker */
         .ticker-wrap {
             background: #fff;
             border-bottom: 4px solid #000;
@@ -90,7 +87,6 @@
             padding: 5px 0;
             font-family: 'Bebas Neue', sans-serif;
             font-size: 18px;
-            letter-spacing: 1px;
         }
 
         .ticker {
@@ -99,37 +95,81 @@
         }
 
         @keyframes ticker {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-50%, 0, 0); }
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+
+            100% {
+                transform: translate3d(-50%, 0, 0);
+            }
         }
 
-        /* --- HORIZONTAL LAYOUT --- */
+        .config-bar {
+            background: #000;
+            color: #fff;
+            padding: 8px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            border-bottom: 4px solid #000;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .config-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .config-input {
+            background: #fff;
+            color: #000;
+            border: 2px solid #fff;
+            padding: 4px 8px;
+            font-family: 'Space Mono', monospace;
+            font-weight: bold;
+            border-radius: 4px;
+            width: 200px;
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+            background: #ff547b;
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 2px solid #fff;
+        }
+
         .top-section {
             display: flex;
             gap: 25px;
             padding: 25px;
-            align-items: stretch;
         }
 
-        .bottom-section {
-            padding: 0 25px 25px 25px;
-        }
-
-        /* --- CANVAS PREVIEW --- */
         .preview-wrapper {
-            flex: 0 0 450px; /* Made the canvas section wider */
+            flex: 0 0 420px;
             background: #61e096;
             border: 4px solid #000;
             border-radius: 12px;
-            padding: 30px;
+            padding: 25px;
             box-shadow: 6px 6px 0px #000;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 15px;
         }
 
         canvas {
             width: 100%;
+            max-width: 380px;
             height: auto;
             image-rendering: pixelated;
             background: black;
@@ -137,9 +177,8 @@
             border-radius: 8px;
         }
 
-        /* --- CONTROLS --- */
         .controls-card {
-            flex: 1; 
+            flex: 1;
             background: #ffe642;
             border: 4px solid #000;
             border-radius: 12px;
@@ -147,19 +186,19 @@
             box-shadow: 6px 6px 0px #000;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            gap: 20px;
         }
 
         .controls-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Stretches dynamically across the massive width */
-            gap: 15px 30px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 20px;
         }
 
         .control {
             background: #fff;
             border: 3px solid #000;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border-radius: 8px;
             box-shadow: 3px 3px 0px #000;
         }
@@ -167,67 +206,89 @@
         .control-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 13px;
+            margin-bottom: 6px;
+            font-size: 12px;
             font-weight: bold;
-            text-transform: uppercase;
         }
 
-        /* Square Brutalist Sliders */
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 12px;
+            height: 10px;
             background: #fff;
             border: 2px solid #000;
-            border-radius: 0;
             outline: none;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 16px;
-            height: 24px;
+            height: 20px;
             background: #000;
             cursor: pointer;
             border: 2px solid #fff;
         }
 
-        /* --- BUTTONS --- */
         .buttons {
             display: flex;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 15px;
         }
 
         button {
             flex: 1;
-            padding: 15px;
-            border: 4px solid #000;
+            padding: 12px;
+            border: 3px solid #000;
             border-radius: 8px;
             font-family: 'Space Mono', monospace;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px;
             text-transform: uppercase;
             cursor: pointer;
-            box-shadow: 5px 5px 0px #000;
-            transition: 0.1s;
+            box-shadow: 4px 4px 0px #000;
+            transition: 0.05s;
         }
-
-        .reset { background: #fff; color: #000; }
-        .send { background: #61e096; color: #000; }
 
         button:active {
-            transform: translate(5px, 5px);
-            box-shadow: 0px 0px 0px #000;
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
         }
 
-        /* --- PRESETS (BOTTOM ROW) --- */
+        .reset {
+            background: #fff;
+        }
+
+        .send {
+            background: #61e096;
+        }
+
+        .save-btn {
+            background: #ffe642;
+            color: #000;
+        }
+
+        .action-btn {
+            background: #fff;
+        }
+
+        .action-btn.pink {
+            background: #ff547b;
+            color: #fff;
+        }
+
+        .bottom-section {
+            padding: 0 25px 25px 25px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
         h2 {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 24px;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
+            font-size: 22px;
             background: #ff547b;
             color: #000;
             display: inline-block;
@@ -239,9 +300,9 @@
 
         .presets {
             display: grid;
-            /* Places all 8 presets in a single continuous row on wide screens */
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 15px;
+            margin-top: 15px;
         }
 
         .preset {
@@ -251,48 +312,62 @@
             padding: 10px;
             cursor: pointer;
             box-shadow: 4px 4px 0px #000;
-            transition: 0.1s;
             text-align: center;
-        }
-
-        .preset:hover {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #000;
-            background: #e3e3e3;
+            position: relative;
         }
 
         .preset.active {
             background: #ff547b;
             color: #fff;
-            transform: translate(4px, 4px);
-            box-shadow: 0px 0px 0px #000;
         }
 
         .preset-preview {
             background: black;
             border: 2px solid #000;
             border-radius: 4px;
-            padding: 4px;
-            margin-bottom: 8px;
+            padding: 2px;
+            margin-bottom: 6px;
         }
 
-        .preset-name {
+        .preset-preview canvas {
+            width: 100%;
+            height: auto;
+            border: none;
+        }
+
+        .delete-preset {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ff547b;
+            color: #fff;
+            border: 2px solid #000;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            line-height: 16px;
+            font-size: 12px;
             font-weight: bold;
-            font-size: 13px;
-            text-transform: uppercase;
+            cursor: pointer;
+            display: none;
         }
 
-        .preset-description {
-            font-size: 10px;
-            margin-top: 2px;
-            color: inherit;
+        .preset:hover .delete-preset.custom {
+            display: block;
         }
 
-        /* Responsive */
-        @media (max-width: 1000px) {
-            .top-section { flex-direction: column; }
-            .preview-wrapper { flex: auto; }
-            .controls-grid { grid-template-columns: 1fr; }
+        @media (max-width: 900px) {
+            .top-section {
+                flex-direction: column;
+            }
+
+            .preview-wrapper {
+                flex: auto;
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -301,348 +376,1984 @@
 
 <div class="window">
 
-    <!-- Title Bar -->
     <div class="title-bar">
         <div class="mac-dots">
             <div class="dot red"></div>
             <div class="dot yellow"></div>
             <div class="dot green"></div>
         </div>
-        <div class="title-text">MoMo Eye Studio</div>
-        <div class="window-controls">_ ☐ X</div>
+
+        <div class="title-text">
+            MoMo Eye Studio
+        </div>
+
+        <div style="font-weight: bold;">
+            _ ☐ X
+        </div>
     </div>
 
-    <!-- Scrolling Ticker -->
+
     <div class="ticker-wrap">
         <div class="ticker">
-            /// I2C PROTOCOL INITIALIZED /// SDA PORT G21 SECURED /// SCK PORT G22 SECURED /// VDD STABLE /// AWAITING SERIAL PAYLOAD /// I2C PROTOCOL INITIALIZED /// SDA PORT G21 SECURED /// SCK PORT G22 SECURED /// VDD STABLE /// AWAITING SERIAL PAYLOAD ///
+            /// I2C PROTOCOL INITIALIZED ///
+            ESP32 TARGET READY ///
+            CANVAS RENDERER LIVE ///
+            EXPRESSION V2 ENGINE ACTIVE ///
+            /// I2C PROTOCOL INITIALIZED ///
+            ESP32 TARGET READY ///
+            CANVAS RENDERER LIVE ///
+            EXPRESSION V2 ENGINE ACTIVE ///
         </div>
     </div>
 
-    <!-- HORIZONTAL TOP SECTION -->
-    <div class="top-section">
-        
-        <!-- Left: Preview Canvas -->
-        <div class="preview-wrapper">
-            <canvas id="mainCanvas" width="128" height="64"></canvas>
+
+    <!-- Live Configuration Bar -->
+
+    <div class="config-bar">
+
+        <div class="config-group">
+
+            <label for="espIpInput">
+                ESP32 HOST:
+            </label>
+
+            <input
+                type="text"
+                id="espIpInput"
+                class="config-input"
+                value="http://10.164.92.49"
+                placeholder="http://10.164.92.49"
+            >
+
         </div>
 
-        <!-- Right: Parameters -->
+
+        <div class="config-group">
+
+            <label class="toggle-label">
+
+                <input
+                    type="checkbox"
+                    id="liveSyncToggle"
+                >
+
+                LIVE SYNC MODE
+
+            </label>
+
+        </div>
+
+    </div>
+
+
+    <div class="top-section">
+
+
+        <!-- Preview -->
+
+        <div class="preview-wrapper">
+
+            <canvas
+                id="mainCanvas"
+                width="128"
+                height="64"
+            ></canvas>
+
+            <div
+                id="statusText"
+                style="font-size: 11px; font-weight: bold; text-align: center;"
+            >
+                STATUS: LOCAL PREVIEW READY
+            </div>
+
+        </div>
+
+
+        <!-- Controls -->
+
         <div class="controls-card">
-            <h2 style="background:#fff; transform: rotate(1deg); margin-bottom: 20px;">PARAMETERS</h2>
+
+            <h2 style="background:#fff; transform: rotate(1deg);">
+                PARAMETERS
+            </h2>
+
 
             <div class="controls-grid">
+
+
                 <div class="control">
-                    <div class="control-header"><span>EYE WIDTH</span><span id="eyeWidthValue">38</span></div>
-                    <input type="range" id="eyeWidth" min="10" max="60" value="38">
+
+                    <div class="control-header">
+                        <span>EYE WIDTH</span>
+                        <span id="eyeWidthVal">38</span>
+                    </div>
+
+                    <input
+                        type="range"
+                        id="eyeWidth"
+                        min="10"
+                        max="60"
+                        value="38"
+                    >
+
                 </div>
+
+
                 <div class="control">
-                    <div class="control-header"><span>EYE HEIGHT</span><span id="eyeHeightValue">30</span></div>
-                    <input type="range" id="eyeHeight" min="4" max="45" value="30">
+
+                    <div class="control-header">
+                        <span>EYE HEIGHT</span>
+                        <span id="eyeHeightVal">30</span>
+                    </div>
+
+                    <input
+                        type="range"
+                        id="eyeHeight"
+                        min="4"
+                        max="45"
+                        value="30"
+                    >
+
                 </div>
+
+
                 <div class="control">
-                    <div class="control-header"><span>CORNER RADIUS</span><span id="cornerRadiusValue">8</span></div>
-                    <input type="range" id="cornerRadius" min="0" max="20" value="8">
+
+                    <div class="control-header">
+                        <span>CORNER RADIUS</span>
+                        <span id="cornerRadiusVal">8</span>
+                    </div>
+
+                    <input
+                        type="range"
+                        id="cornerRadius"
+                        min="0"
+                        max="20"
+                        value="8"
+                    >
+
                 </div>
+
+
                 <div class="control">
-                    <div class="control-header"><span>PUPIL SIZE</span><span id="pupilSizeValue">7</span></div>
-                    <input type="range" id="pupilSize" min="0" max="12" value="7">
+
+                    <div class="control-header">
+                        <span>PUPIL SIZE</span>
+                        <span id="pupilSizeVal">7</span>
+                    </div>
+
+                    <input
+                        type="range"
+                        id="pupilSize"
+                        min="0"
+                        max="12"
+                        value="7"
+                    >
+
                 </div>
+
+
                 <div class="control">
-                    <div class="control-header"><span>EYE SPACING</span><span id="eyeSpacingValue">50</span></div>
-                    <input type="range" id="eyeSpacing" min="25" max="80" value="50">
+
+                    <div class="control-header">
+                        <span>EYE SPACING</span>
+                        <span id="eyeSpacingVal">50</span>
+                    </div>
+
+                    <input
+                        type="range"
+                        id="eyeSpacing"
+                        min="25"
+                        max="80"
+                        value="50"
+                    >
+
                 </div>
+
+
                 <div class="control">
-                    <div class="control-header"><span>X POSITION</span><span id="eyeCenterXValue">64</span></div>
-                    <input type="range" id="eyeCenterX" min="35" max="93" value="64">
+
+                    <div class="control-header">
+                        <span>X POSITION</span>
+                        <span id="eyeCenterXVal">64</span>
+                    </div>
+
+                    <input
+                        type="range"
+                        id="eyeCenterX"
+                        min="35"
+                        max="93"
+                        value="64"
+                    >
+
                 </div>
-                <div class="control" style="grid-column: 1 / -1;">
-                    <div class="control-header"><span>Y POSITION</span><span id="eyeCenterYValue">33</span></div>
-                    <input type="range" id="eyeCenterY" min="15" max="50" value="33">
+
+
+                <div
+                    class="control"
+                    style="grid-column: 1 / -1;"
+                >
+
+                    <div class="control-header">
+                        <span>Y POSITION</span>
+                        <span id="eyeCenterYVal">33</span>
+                    </div>
+
+                    <input
+                        type="range"
+                        id="eyeCenterY"
+                        min="15"
+                        max="50"
+                        value="33"
+                    >
+
                 </div>
+
             </div>
 
+
             <div class="buttons">
-                <button class="reset" onclick="resetExpression()">RESET</button>
-                <button class="send" onclick="sendToMoMo()">UPLOAD_</button>
+
+                <button
+                    class="reset"
+                    onclick="resetExpression()"
+                >
+                    RESET
+                </button>
+
+                <button
+                    class="send"
+                    onclick="sendToMoMo()"
+                >
+                    UPLOAD_
+                </button>
+
             </div>
+
+
+            <div>
+
+                <h2
+                    style="background:#fff; font-size:16px;"
+                >
+                    ACTIONS
+                </h2>
+
+
+                <div
+                    style="
+                        display:grid;
+                        grid-template-columns:
+                        repeat(auto-fit,minmax(80px,1fr));
+                        gap:8px;
+                        margin-top:8px;
+                    "
+                >
+
+                    <button
+                        class="action-btn"
+                        onclick="triggerAction('LEFT')"
+                    >
+                        ◄ LEFT
+                    </button>
+
+                    <button
+                        class="action-btn"
+                        onclick="triggerAction('RIGHT')"
+                    >
+                        RIGHT ►
+                    </button>
+
+                    <button
+                        class="action-btn"
+                        onclick="triggerAction('UP')"
+                    >
+                        ▲ UP
+                    </button>
+
+                    <button
+                        class="action-btn"
+                        onclick="triggerAction('DOWN')"
+                    >
+                        ▼ DOWN
+                    </button>
+
+                    <button
+                        class="action-btn pink"
+                        onclick="triggerAction('BLINK')"
+                    >
+                        BLINK 👁
+                    </button>
+
+                </div>
+
+            </div>
+
         </div>
 
     </div>
 
-    <!-- HORIZONTAL BOTTOM SECTION -->
+
+    <!-- Presets -->
+
     <div class="bottom-section">
-        <h2>LOADOUTS</h2>
-        <div class="presets" id="presetContainer"></div>
+
+        <div class="section-header">
+
+            <h2>
+                LOADOUTS
+            </h2>
+
+            <button
+                class="save-btn"
+                onclick="saveCustomPreset()"
+                style="flex:0 0 auto; padding:6px 16px;"
+            >
+                + SAVE PRESET
+            </button>
+
+        </div>
+
+
+        <div
+            class="presets"
+            id="presetContainer"
+        ></div>
+
     </div>
 
 </div>
 
+
 <script>
+
+
 // =====================================================
-// MoMo Expression Studio V2
-// Website preview matched to the working ESP32 V2
+// STATE
 // =====================================================
 
-let currentExpression = {
-    name: "NEUTRAL", description: "Default mode",
-    eyeWidth: 38, eyeHeight: 30, cornerRadius: 8,
-    pupilSize: 7, eyeSpacing: 50, eyeCenterX: 64,
-    eyeCenterY: 33, pupilY: 0, rotation: 0,
-    upperLid: 0, upperLidInner: 0, upperLidOuter: 0,
-    lowerLid: 0, lowerLidInner: 0, lowerLidOuter: 0,
-    mouth: { type: "line", width: 18, height: 2, y: 55, curvature: 0, thickness: 2 }
-};
+let expr = {
 
-const presets = {
-    neutral: {
-        name:"NEUTRAL", description:"Default mode",
-        eyeWidth:38, eyeHeight:30, cornerRadius:8, pupilSize:7,
-        eyeSpacing:50, eyeCenterX:64, eyeCenterY:33, pupilY:0, rotation:0,
-        upperLid:0, upperLidInner:0, upperLidOuter:0,
-        lowerLid:0, lowerLidInner:0, lowerLidOuter:0,
-        mouth:{type:"line",width:18,height:2,y:55,curvature:0,thickness:2}
-    },
+    eyeWidth: 38,
+    eyeHeight: 30,
 
-    happy: {
-        name:"HAPPY", description:"Friendly",
-        eyeWidth:38, eyeHeight:22, cornerRadius:10, pupilSize:7,
-        eyeSpacing:50, eyeCenterX:64, eyeCenterY:35, pupilY:-1, rotation:0,
-        upperLid:0, upperLidInner:0, upperLidOuter:0,
-        lowerLid:4, lowerLidInner:5, lowerLidOuter:3,
-        mouth:{type:"smile",width:24,height:7,y:53,curvature:1,thickness:2}
-    },
+    cornerRadius: 8,
+    pupilSize: 7,
 
-    sad: {
-        name:"SAD", description:"Melancholy",
-        eyeWidth:38, eyeHeight:30, cornerRadius:8, pupilSize:7,
-        eyeSpacing:50, eyeCenterX:64, eyeCenterY:32, pupilY:3, rotation:0,
-        upperLid:4, upperLidInner:6, upperLidOuter:2,
-        lowerLid:0, lowerLidInner:0, lowerLidOuter:0,
-        mouth:{type:"sad",width:22,height:7,y:57,curvature:-1,thickness:2}
-    },
+    eyeSpacing: 50,
 
-    angry: {
-        name:"ANGRY", description:"Focused",
-        eyeWidth:38, eyeHeight:30, cornerRadius:8, pupilSize:7,
-        eyeSpacing:50, eyeCenterX:64, eyeCenterY:32, pupilY:1, rotation:0,
-        upperLid:5, upperLidInner:8, upperLidOuter:2,
-        lowerLid:0, lowerLidInner:0, lowerLidOuter:0,
-        mouth:{type:"line",width:18,height:1,y:56,curvature:-1,thickness:1}
-    },
+    eyeCenterX: 64,
+    eyeCenterY: 33,
 
-    surprised: {
-        name:"SURPRISED", description:"Shocked",
-        eyeWidth:40, eyeHeight:34, cornerRadius:12, pupilSize:5,
-        eyeSpacing:50, eyeCenterX:64, eyeCenterY:30, pupilY:-1, rotation:0,
-        upperLid:0, upperLidInner:0, upperLidOuter:0,
-        lowerLid:0, lowerLidInner:0, lowerLidOuter:0,
-        mouth:{type:"open",width:11,height:9,y:54,curvature:0,thickness:2}
-    },
+    pupilY: 0,
 
-    sleepy: {
-        name:"SLEEPY", description:"Tired",
-        eyeWidth:38, eyeHeight:16, cornerRadius:8, pupilSize:7,
-        eyeSpacing:50, eyeCenterX:64, eyeCenterY:35, pupilY:2, rotation:0,
-        upperLid:5, upperLidInner:6, upperLidOuter:5,
-        lowerLid:0, lowerLidInner:1, lowerLidOuter:1,
-        mouth:{type:"line",width:14,height:1,y:56,curvature:0,thickness:1}
+    // Legacy eyelids
+
+    upperLid: 0,
+    lowerLid: 0,
+
+    // Expression V2 geometry
+
+    upperLidInner: 0,
+    upperLidOuter: 0,
+
+    lowerLidInner: 0,
+    lowerLidOuter: 0,
+
+    mouth: {
+        type: "line",
+        width: 18,
+        height: 2,
+        y: 55,
+        curvature: 0
     }
 };
 
-const canvas = document.getElementById("mainCanvas");
-const ctx = canvas.getContext("2d");
 
-function roundedRect(c,x,y,w,h,r) {
+// =====================================================
+// DEFAULT PRESETS — EXPRESSION V2
+// =====================================================
+
+const defaultPresets = {
+
+
+    // -------------------------------------------------
+    // NEUTRAL
+    // -------------------------------------------------
+
+    neutral: {
+
+        eyeWidth: 38,
+        eyeHeight: 30,
+
+        cornerRadius: 8,
+        pupilSize: 7,
+
+        eyeSpacing: 50,
+
+        eyeCenterX: 64,
+        eyeCenterY: 33,
+
+        pupilY: 0,
+
+        upperLid: 0,
+        lowerLid: 0,
+
+        upperLidInner: 0,
+        upperLidOuter: 0,
+
+        lowerLidInner: 0,
+        lowerLidOuter: 0,
+
+        mouth: {
+            type: "line",
+            width: 18,
+            height: 2,
+            y: 55,
+            curvature: 0
+        }
+    },
+
+
+    // -------------------------------------------------
+    // HAPPY
+    // Curved / relaxed lower geometry
+    // -------------------------------------------------
+
+    happy: {
+
+        eyeWidth: 38,
+        eyeHeight: 22,
+
+        cornerRadius: 10,
+        pupilSize: 7,
+
+        eyeSpacing: 50,
+
+        eyeCenterX: 64,
+        eyeCenterY: 35,
+
+        pupilY: -1,
+
+        upperLid: 0,
+        lowerLid: 4,
+
+        upperLidInner: 0,
+        upperLidOuter: 0,
+
+        lowerLidInner: 5,
+        lowerLidOuter: 3,
+
+        mouth: {
+            type: "smile",
+            width: 24,
+            height: 7,
+            y: 53,
+            curvature: 1
+        }
+    },
+
+
+    // -------------------------------------------------
+    // SAD
+    // Asymmetric upper geometry
+    // -------------------------------------------------
+
+    sad: {
+
+        eyeWidth: 38,
+        eyeHeight: 30,
+
+        cornerRadius: 8,
+        pupilSize: 7,
+
+        eyeSpacing: 50,
+
+        eyeCenterX: 64,
+        eyeCenterY: 32,
+
+        pupilY: 3,
+
+        upperLid: 4,
+        lowerLid: 0,
+
+        upperLidInner: 6,
+        upperLidOuter: 2,
+
+        lowerLidInner: 0,
+        lowerLidOuter: 0,
+
+        mouth: {
+            type: "sad",
+            width: 22,
+            height: 7,
+            y: 57,
+            curvature: -1
+        }
+    },
+
+
+    // -------------------------------------------------
+    // ANGRY
+    // Strong slanted upper eyelids
+    // -------------------------------------------------
+
+    angry: {
+
+        eyeWidth: 38,
+        eyeHeight: 30,
+
+        cornerRadius: 7,
+        pupilSize: 7,
+
+        eyeSpacing: 50,
+
+        eyeCenterX: 64,
+        eyeCenterY: 32,
+
+        pupilY: 1,
+
+        upperLid: 5,
+        lowerLid: 0,
+
+        upperLidInner: 8,
+        upperLidOuter: 2,
+
+        lowerLidInner: 0,
+        lowerLidOuter: 0,
+
+        mouth: {
+            type: "line",
+            width: 18,
+            height: 1,
+            y: 56,
+            curvature: -1
+        }
+    },
+
+
+    // -------------------------------------------------
+    // SURPRISED
+    // Large balanced eyes
+    // -------------------------------------------------
+
+    shocked: {
+
+        eyeWidth: 40,
+        eyeHeight: 34,
+
+        cornerRadius: 12,
+        pupilSize: 5,
+
+        eyeSpacing: 50,
+
+        eyeCenterX: 64,
+        eyeCenterY: 30,
+
+        pupilY: -1,
+
+        upperLid: 0,
+        lowerLid: 0,
+
+        upperLidInner: 0,
+        upperLidOuter: 0,
+
+        lowerLidInner: 0,
+        lowerLidOuter: 0,
+
+        mouth: {
+            type: "open",
+            width: 11,
+            height: 9,
+            y: 54,
+            curvature: 0
+        }
+    },
+
+
+    // -------------------------------------------------
+    // SLEEPY
+    // Partially closed upper eyelids
+    // -------------------------------------------------
+
+    sleepy: {
+
+        eyeWidth: 38,
+        eyeHeight: 16,
+
+        cornerRadius: 8,
+        pupilSize: 7,
+
+        eyeSpacing: 50,
+
+        eyeCenterX: 64,
+        eyeCenterY: 35,
+
+        pupilY: 2,
+
+        upperLid: 5,
+        lowerLid: 0,
+
+        upperLidInner: 6,
+        upperLidOuter: 5,
+
+        lowerLidInner: 1,
+        lowerLidOuter: 1,
+
+        mouth: {
+            type: "line",
+            width: 14,
+            height: 1,
+            y: 56,
+            curvature: 0
+        }
+    }
+};
+
+
+let customPresets =
+    JSON.parse(
+        localStorage.getItem("momo_custom_presets") || "{}"
+    );
+
+
+let activeKey = "neutral";
+
+
+// =====================================================
+// DOM
+// =====================================================
+
+const mainCanvas =
+    document.getElementById("mainCanvas");
+
+const mainCtx =
+    mainCanvas.getContext("2d");
+
+const espIpInput =
+    document.getElementById("espIpInput");
+
+const liveSyncToggle =
+    document.getElementById("liveSyncToggle");
+
+
+// =====================================================
+// LOAD ESP32 IP
+// =====================================================
+
+if (
+    localStorage.getItem("momo_esp32_ip")
+) {
+
+    espIpInput.value =
+        localStorage.getItem("momo_esp32_ip");
+}
+
+
+espIpInput.addEventListener(
+    "change",
+    () => {
+
+        localStorage.setItem(
+            "momo_esp32_ip",
+            espIpInput.value.trim()
+        );
+    }
+);
+
+
+// =====================================================
+// ANIMATION STATE
+// =====================================================
+
+let animationTimer = null;
+let lerpAnimId = null;
+let debounceTimer = null;
+
+
+// =====================================================
+// ROUNDED RECT
+// =====================================================
+
+function drawRoundedRect(
+    c,
+    x,
+    y,
+    w,
+    h,
+    r
+) {
+
+    r =
+        Math.min(
+            r,
+            w / 2,
+            h / 2
+        );
+
+
     c.beginPath();
-    c.roundRect(x,y,w,h,Math.max(0,Math.min(r,Math.min(w,h)/2)));
+
+    c.moveTo(
+        x + r,
+        y
+    );
+
+    c.arcTo(
+        x + w,
+        y,
+        x + w,
+        y + h,
+        r
+    );
+
+    c.arcTo(
+        x + w,
+        y + h,
+        x,
+        y + h,
+        r
+    );
+
+    c.arcTo(
+        x,
+        y + h,
+        x,
+        y,
+        r
+    );
+
+    c.arcTo(
+        x,
+        y,
+        x + w,
+        y,
+        r
+    );
+
+    c.closePath();
+
     c.fill();
 }
 
-function drawEyelids(c,cx,cy,w,h,e) {
-    const left=cx-w/2, right=cx+w/2;
-    const top=cy-h/2, bottom=cy+h/2;
 
-    c.fillStyle="black";
+// =====================================================
+// V2 EYELID MASK
+//
+// Creates a slanted/asymmetric black mask instead
+// of the old rectangular eyelid band.
+// =====================================================
 
-    // V2 upper lid: inner/outer values create the slant.
-    const inner=e.upperLidInner || 0;
-    const outer=e.upperLidOuter || 0;
-    const upper=e.upperLid || Math.max(inner,outer);
+function drawUpperLid(
+    c,
+    x,
+    y,
+    w,
+    h,
+    inner,
+    outer
+) {
 
-    if (upper>0 || inner>0 || outer>0) {
-        c.beginPath();
-        c.moveTo(left-1,top-1);
-        c.lineTo(left-1,top+outer);
-        c.lineTo(cx,top+upper);
-        c.lineTo(right+1,top+inner);
-        c.lineTo(right+1,top-1);
-        c.closePath();
-        c.fill();
+    if (
+        inner <= 0 &&
+        outer <= 0
+    ) {
+        return;
     }
 
-    // V2 lower lid: mainly used by HAPPY.
-    const li=e.lowerLidInner || 0;
-    const lo=e.lowerLidOuter || 0;
-    const lower=e.lowerLid || Math.max(li,lo);
 
-    if (lower>0 || li>0 || lo>0) {
-        c.beginPath();
-        c.moveTo(left-1,bottom+1);
-        c.lineTo(left-1,bottom-lo);
-        c.lineTo(cx,bottom-lower);
-        c.lineTo(right+1,bottom-li);
-        c.lineTo(right+1,bottom+1);
-        c.closePath();
-        c.fill();
-    }
-}
+    const left =
+        x - w / 2 - 1;
 
-function drawMouth(c,m) {
-    if (!m) return;
+    const right =
+        x + w / 2 + 1;
 
-    const x=64, y=m.y, w=m.width, h=m.height;
-    c.strokeStyle="white";
-    c.lineWidth=m.thickness || 2;
-    c.lineCap="round";
+    const top =
+        y - 1;
 
-    if (m.type==="line") {
-        c.beginPath();
-        c.moveTo(x-w/2,y);
-        c.quadraticCurveTo(x,y+(m.curvature||0)*h,x+w/2,y);
-        c.stroke();
-    }
-    else if (m.type==="smile" || m.type==="sad") {
-        c.beginPath();
-        c.moveTo(x-w/2,y);
-        c.quadraticCurveTo(
-            x,
-            y+(m.type==="smile" ? h : -h),
-            x+w/2,
-            y
-        );
-        c.stroke();
-    }
-    else if (m.type==="open") {
-        c.beginPath();
-        c.ellipse(x,y,w/2,h/2,0,0,Math.PI*2);
-        c.stroke();
-    }
-}
-
-function renderExpression(c,e) {
-    c.fillStyle="black";
-    c.fillRect(0,0,128,64);
-
-    const leftX=e.eyeCenterX-e.eyeSpacing/2;
-    const rightX=e.eyeCenterX+e.eyeSpacing/2;
-
-    [leftX,rightX].forEach(x => {
-        const y=e.eyeCenterY-e.eyeHeight/2;
-
-        c.fillStyle="white";
-        roundedRect(
-            c,
-            x-e.eyeWidth/2,
-            y,
-            e.eyeWidth,
-            e.eyeHeight,
-            e.cornerRadius
-        );
-
-        c.fillStyle="black";
-        c.beginPath();
-        c.arc(
-            x,
-            e.eyeCenterY+(e.pupilY||0),
-            e.pupilSize,
+    const leftClosure =
+        Math.max(
             0,
-            Math.PI*2
+            outer
         );
-        c.fill();
 
-        drawEyelids(c,x,e.eyeCenterY,e.eyeWidth,e.eyeHeight,e);
-    });
+    const rightClosure =
+        Math.max(
+            0,
+            inner
+        );
 
-    drawMouth(c,e.mouth);
+
+    c.fillStyle = "black";
+
+    c.beginPath();
+
+    c.moveTo(
+        left,
+        top
+    );
+
+    c.lineTo(
+        right,
+        top
+    );
+
+    c.lineTo(
+        right,
+        top + rightClosure
+    );
+
+    c.lineTo(
+        left,
+        top + leftClosure
+    );
+
+    c.closePath();
+
+    c.fill();
 }
 
-function drawExpression(e) {
-    ctx.clearRect(0,0,128,64);
-    renderExpression(ctx,e);
+
+// =====================================================
+// V2 LOWER EYELID
+// =====================================================
+
+function drawLowerLid(
+    c,
+    x,
+    y,
+    w,
+    h,
+    inner,
+    outer
+) {
+
+    if (
+        inner <= 0 &&
+        outer <= 0
+    ) {
+        return;
+    }
+
+
+    const left =
+        x - w / 2 - 1;
+
+    const right =
+        x + w / 2 + 1;
+
+    const bottom =
+        y + h + 1;
+
+    const leftClosure =
+        Math.max(
+            0,
+            outer
+        );
+
+    const rightClosure =
+        Math.max(
+            0,
+            inner
+        );
+
+
+    c.fillStyle = "black";
+
+    c.beginPath();
+
+    c.moveTo(
+        left,
+        bottom
+    );
+
+    c.lineTo(
+        right,
+        bottom
+    );
+
+    c.lineTo(
+        right,
+        bottom - rightClosure
+    );
+
+    c.lineTo(
+        left,
+        bottom - leftClosure
+    );
+
+    c.closePath();
+
+    c.fill();
 }
 
-function drawMiniPreview(mini,e) {
-    renderExpression(mini.getContext("2d"),e);
-}
 
-function selectPreset(name) {
-    currentExpression=JSON.parse(JSON.stringify(presets[name]));
-    updateSliders();
-    drawExpression(currentExpression);
-    highlightPreset(name);
-}
+// =====================================================
+// RENDER
+// =====================================================
 
-function highlightPreset(name) {
-    document.querySelectorAll(".preset").forEach(card => {
-        card.classList.toggle("active",card.dataset.preset===name);
-    });
-}
+function render(
+    c,
+    e
+) {
 
-function createPresetCards() {
-    const container=document.getElementById("presetContainer");
+    c.fillStyle = "black";
 
-    for (const key in presets) {
-        const p=presets[key];
-        const card=document.createElement("div");
+    c.fillRect(
+        0,
+        0,
+        128,
+        64
+    );
 
-        card.className="preset";
-        card.dataset.preset=key;
-        card.innerHTML=`
-            <div class="preset-preview"><canvas width="128" height="64"></canvas></div>
-            <div class="preset-name">${p.name}</div>
-            <div class="preset-description">${p.description}</div>
-        `;
 
-        card.onclick=()=>selectPreset(key);
-        container.appendChild(card);
-        drawMiniPreview(card.querySelector("canvas"),p);
+    const leftX =
+        e.eyeCenterX -
+        e.eyeSpacing / 2;
+
+
+    const rightX =
+        e.eyeCenterX +
+        e.eyeSpacing / 2;
+
+
+    [
+        leftX,
+        rightX
+    ].forEach(
+        x => {
+
+            const y =
+                e.eyeCenterY -
+                e.eyeHeight / 2;
+
+
+            // -----------------------------------------
+            // Eye
+            // -----------------------------------------
+
+            c.fillStyle = "white";
+
+            drawRoundedRect(
+                c,
+                x - e.eyeWidth / 2,
+                y,
+                e.eyeWidth,
+                e.eyeHeight,
+                e.cornerRadius
+            );
+
+
+            // -----------------------------------------
+            // Pupil
+            // -----------------------------------------
+
+            c.fillStyle = "black";
+
+            c.beginPath();
+
+            c.arc(
+                x,
+                e.eyeCenterY +
+                (e.pupilY || 0),
+
+                Math.max(
+                    0,
+                    e.pupilSize
+                ),
+
+                0,
+                Math.PI * 2
+            );
+
+            c.fill();
+
+
+            // -----------------------------------------
+            // V2 Upper Eyelid
+            // -----------------------------------------
+
+            drawUpperLid(
+                c,
+                x,
+                y,
+                e.eyeWidth,
+                e.eyeHeight,
+
+                e.upperLidInner || 0,
+                e.upperLidOuter || 0
+            );
+
+
+            // -----------------------------------------
+            // V2 Lower Eyelid
+            // -----------------------------------------
+
+            drawLowerLid(
+                c,
+                x,
+                y,
+                e.eyeWidth,
+                e.eyeHeight,
+
+                e.lowerLidInner || 0,
+                e.lowerLidOuter || 0
+            );
+
+        }
+    );
+
+
+    // =================================================
+    // MOUTH
+    // =================================================
+
+    if (e.mouth) {
+
+        c.strokeStyle = "white";
+
+        c.lineWidth = 2;
+
+        c.lineCap = "round";
+
+
+        const mx = 64;
+
+        const my =
+            e.mouth.y;
+
+        const mw =
+            e.mouth.width;
+
+        const mh =
+            e.mouth.height;
+
+
+        // ---------------------------------------------
+        // Line
+        // ---------------------------------------------
+
+        if (
+            e.mouth.type === "line"
+        ) {
+
+            c.beginPath();
+
+            c.moveTo(
+                mx - mw / 2,
+                my
+            );
+
+            c.lineTo(
+                mx + mw / 2,
+                my
+            );
+
+            c.stroke();
+        }
+
+
+        // ---------------------------------------------
+        // Smile
+        // ---------------------------------------------
+
+        else if (
+            e.mouth.type === "smile"
+        ) {
+
+            c.beginPath();
+
+            c.moveTo(
+                mx - mw / 2,
+                my
+            );
+
+            c.quadraticCurveTo(
+                mx,
+                my + mh,
+                mx + mw / 2,
+                my
+            );
+
+            c.stroke();
+        }
+
+
+        // ---------------------------------------------
+        // Sad
+        // ---------------------------------------------
+
+        else if (
+            e.mouth.type === "sad"
+        ) {
+
+            c.beginPath();
+
+            c.moveTo(
+                mx - mw / 2,
+                my + mh
+            );
+
+            c.quadraticCurveTo(
+                mx,
+                my - mh,
+                mx + mw / 2,
+                my + mh
+            );
+
+            c.stroke();
+        }
+
+
+        // ---------------------------------------------
+        // Open
+        // ---------------------------------------------
+
+        else if (
+            e.mouth.type === "open"
+        ) {
+
+            c.beginPath();
+
+            c.ellipse(
+                mx,
+                my,
+                mw / 2,
+                mh / 2,
+                0,
+                0,
+                Math.PI * 2
+            );
+
+            c.stroke();
+        }
     }
 }
 
-const sliderNames=[
-    "eyeWidth","eyeHeight","cornerRadius","pupilSize",
-    "eyeSpacing","eyeCenterX","eyeCenterY"
+
+// =====================================================
+// UPDATE MAIN CANVAS
+// =====================================================
+
+function updateMainCanvas() {
+
+    render(
+        mainCtx,
+        expr
+    );
+
+
+    if (
+        liveSyncToggle.checked
+    ) {
+
+        debouncedSend();
+    }
+}
+
+
+// =====================================================
+// SLIDERS
+// =====================================================
+
+const sliders = [
+
+    "eyeWidth",
+    "eyeHeight",
+    "cornerRadius",
+    "pupilSize",
+    "eyeSpacing",
+    "eyeCenterX",
+    "eyeCenterY"
+
 ];
 
-sliderNames.forEach(name=>{
-    const slider=document.getElementById(name);
 
-    slider.addEventListener("input",()=>{
-        currentExpression[name]=Number(slider.value);
-        document.getElementById(name+"Value").textContent=slider.value;
-        drawExpression(currentExpression);
-    });
-});
+sliders.forEach(
+    id => {
 
-function updateSliders() {
-    sliderNames.forEach(name=>{
-        const slider=document.getElementById(name);
-        slider.value=currentExpression[name];
-        document.getElementById(name+"Value").textContent=currentExpression[name];
-    });
+        const slider =
+            document.getElementById(id);
+
+
+        slider.addEventListener(
+            "input",
+            event => {
+
+                if (lerpAnimId) {
+
+                    cancelAnimationFrame(
+                        lerpAnimId
+                    );
+                }
+
+
+                expr[id] =
+                    Number(
+                        event.target.value
+                    );
+
+
+                document.getElementById(
+                    id + "Val"
+                ).textContent =
+                    event.target.value;
+
+
+                updateMainCanvas();
+            }
+        );
+    }
+);
+
+
+// =====================================================
+// SYNC SLIDERS
+// =====================================================
+
+function syncSliders() {
+
+    sliders.forEach(
+        id => {
+
+            document.getElementById(
+                id
+            ).value =
+                Math.round(
+                    expr[id]
+                );
+
+
+            document.getElementById(
+                id + "Val"
+            ).textContent =
+                Math.round(
+                    expr[id]
+                );
+        }
+    );
 }
+
+
+// =====================================================
+// RESET
+// =====================================================
 
 function resetExpression() {
-    selectPreset("neutral");
+
+    loadPreset(
+        "neutral"
+    );
 }
+
+
+// =====================================================
+// GET ALL PRESETS
+// =====================================================
+
+function getAllPresets() {
+
+    return {
+        ...defaultPresets,
+        ...customPresets
+    };
+}
+
+
+// =====================================================
+// MORPH TO PRESET
+// =====================================================
+
+function morphToPreset(
+    targetKey
+) {
+
+    const all =
+        getAllPresets();
+
+
+    if (
+        !all[targetKey]
+    ) {
+        return;
+    }
+
+
+    if (lerpAnimId) {
+
+        cancelAnimationFrame(
+            lerpAnimId
+        );
+    }
+
+
+    const target =
+        JSON.parse(
+            JSON.stringify(
+                all[targetKey]
+            )
+        );
+
+
+    activeKey =
+        targetKey;
+
+
+    document
+        .querySelectorAll(".preset")
+        .forEach(
+            el => {
+
+                el.classList.toggle(
+                    "active",
+                    el.dataset.key ===
+                    targetKey
+                );
+            }
+        );
+
+
+    const duration =
+        250;
+
+
+    const startTime =
+        performance.now();
+
+
+    const startExpr =
+        JSON.parse(
+            JSON.stringify(
+                expr
+            )
+        );
+
+
+    function lerpStep(
+        now
+    ) {
+
+        const elapsed =
+            now - startTime;
+
+
+        const progress =
+            Math.min(
+                1,
+                elapsed / duration
+            );
+
+
+        // ---------------------------------------------
+        // Standard geometry
+        // ---------------------------------------------
+
+        sliders.forEach(
+            key => {
+
+                expr[key] =
+                    startExpr[key] +
+                    (
+                        target[key] -
+                        startExpr[key]
+                    ) *
+                    progress;
+            }
+        );
+
+
+        // ---------------------------------------------
+        // Pupil
+        // ---------------------------------------------
+
+        expr.pupilY =
+            startExpr.pupilY +
+            (
+                (target.pupilY || 0) -
+                startExpr.pupilY
+            ) *
+            progress;
+
+
+        // ---------------------------------------------
+        // Legacy eyelids
+        // ---------------------------------------------
+
+        expr.upperLid =
+            startExpr.upperLid +
+            (
+                (target.upperLid || 0) -
+                startExpr.upperLid
+            ) *
+            progress;
+
+
+        expr.lowerLid =
+            startExpr.lowerLid +
+            (
+                (target.lowerLid || 0) -
+                startExpr.lowerLid
+            ) *
+            progress;
+
+
+        // ---------------------------------------------
+        // V2 UPPER INNER
+        // ---------------------------------------------
+
+        expr.upperLidInner =
+            startExpr.upperLidInner +
+            (
+                (target.upperLidInner || 0) -
+                startExpr.upperLidInner
+            ) *
+            progress;
+
+
+        // ---------------------------------------------
+        // V2 UPPER OUTER
+        // ---------------------------------------------
+
+        expr.upperLidOuter =
+            startExpr.upperLidOuter +
+            (
+                (target.upperLidOuter || 0) -
+                startExpr.upperLidOuter
+            ) *
+            progress;
+
+
+        // ---------------------------------------------
+        // V2 LOWER INNER
+        // ---------------------------------------------
+
+        expr.lowerLidInner =
+            startExpr.lowerLidInner +
+            (
+                (target.lowerLidInner || 0) -
+                startExpr.lowerLidInner
+            ) *
+            progress;
+
+
+        // ---------------------------------------------
+        // V2 LOWER OUTER
+        // ---------------------------------------------
+
+        expr.lowerLidOuter =
+            startExpr.lowerLidOuter +
+            (
+                (target.lowerLidOuter || 0) -
+                startExpr.lowerLidOuter
+            ) *
+            progress;
+
+
+        // Mouth
+
+        expr.mouth =
+            target.mouth;
+
+
+        syncSliders();
+
+        render(
+            mainCtx,
+            expr
+        );
+
+
+        if (
+            progress < 1
+        ) {
+
+            lerpAnimId =
+                requestAnimationFrame(
+                    lerpStep
+                );
+
+        } else {
+
+            expr =
+                target;
+
+            syncSliders();
+
+            updateMainCanvas();
+        }
+    }
+
+
+    lerpAnimId =
+        requestAnimationFrame(
+            lerpStep
+        );
+}
+
+
+// =====================================================
+// LOAD PRESET
+// =====================================================
+
+function loadPreset(
+    key
+) {
+
+    morphToPreset(
+        key
+    );
+}
+
+
+// =====================================================
+// SAVE CUSTOM PRESET
+// =====================================================
+
+function saveCustomPreset() {
+
+    const name =
+        prompt(
+            "Enter a name for your custom preset loadout:"
+        );
+
+
+    if (!name) {
+        return;
+    }
+
+
+    const key =
+        name
+            .toLowerCase()
+            .replace(
+                /\s+/g,
+                "_"
+            );
+
+
+    customPresets[key] =
+        JSON.parse(
+            JSON.stringify(
+                expr
+            )
+        );
+
+
+    localStorage.setItem(
+        "momo_custom_presets",
+        JSON.stringify(
+            customPresets
+        )
+    );
+
+
+    buildPresetCards();
+
+    loadPreset(key);
+}
+
+
+// =====================================================
+// DELETE CUSTOM PRESET
+// =====================================================
+
+function deleteCustomPreset(
+    key,
+    event
+) {
+
+    event.stopPropagation();
+
+
+    if (
+        confirm(
+            `Delete loadout '${key.toUpperCase()}'?`
+        )
+    ) {
+
+        delete customPresets[key];
+
+
+        localStorage.setItem(
+            "momo_custom_presets",
+            JSON.stringify(
+                customPresets
+            )
+        );
+
+
+        buildPresetCards();
+
+        loadPreset(
+            "neutral"
+        );
+    }
+}
+
+
+// =====================================================
+// BUILD PRESET CARDS
+// =====================================================
+
+function buildPresetCards() {
+
+    const container =
+        document.getElementById(
+            "presetContainer"
+        );
+
+
+    container.innerHTML = "";
+
+
+    const all =
+        getAllPresets();
+
+
+    Object.keys(all).forEach(
+        key => {
+
+            const isCustom =
+                !!customPresets[key];
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "preset" +
+                (
+                    key === activeKey
+                    ? " active"
+                    : ""
+                );
+
+
+            card.dataset.key =
+                key;
+
+
+            card.innerHTML = `
+
+                ${
+                    isCustom
+                    ?
+                    `
+                    <div
+                        class="delete-preset custom"
+                        onclick="deleteCustomPreset('${key}', event)"
+                    >
+                        ✕
+                    </div>
+                    `
+                    :
+                    ""
+                }
+
+                <div class="preset-preview">
+
+                    <canvas
+                        width="128"
+                        height="64"
+                    ></canvas>
+
+                </div>
+
+                <div
+                    style="font-weight:bold; font-size:11px;"
+                >
+                    ${key.toUpperCase()}
+                </div>
+            `;
+
+
+            card.onclick =
+                () => loadPreset(key);
+
+
+            container.appendChild(
+                card
+            );
+
+
+            const miniCtx =
+                card
+                    .querySelector("canvas")
+                    .getContext("2d");
+
+
+            render(
+                miniCtx,
+                all[key]
+            );
+        }
+    );
+}
+
+
+// =====================================================
+// ACTIONS
+// =====================================================
+
+function triggerAction(
+    act
+) {
+
+    if (animationTimer) {
+
+        clearTimeout(
+            animationTimer
+        );
+    }
+
+
+    let temp =
+        JSON.parse(
+            JSON.stringify(
+                expr
+            )
+        );
+
+
+    if (
+        act === "LEFT"
+    ) {
+
+        temp.eyeCenterX -= 12;
+    }
+
+
+    if (
+        act === "RIGHT"
+    ) {
+
+        temp.eyeCenterX += 12;
+    }
+
+
+    if (
+        act === "UP"
+    ) {
+
+        temp.eyeCenterY -= 8;
+    }
+
+
+    if (
+        act === "DOWN"
+    ) {
+
+        temp.eyeCenterY += 8;
+    }
+
+
+    // =================================================
+    // BLINK
+    // =================================================
+
+    if (
+        act === "BLINK"
+    ) {
+
+        let step = 0;
+
+
+        const originalUpperInner =
+            expr.upperLidInner;
+
+
+        const originalUpperOuter =
+            expr.upperLidOuter;
+
+
+        const blinkInterval =
+            setInterval(
+                () => {
+
+                    step++;
+
+
+                    if (
+                        step <= 2
+                    ) {
+
+                        const amount =
+                            step === 1
+                            ? 8
+                            : 16;
+
+
+                        expr.upperLidInner =
+                            amount;
+
+
+                        expr.upperLidOuter =
+                            amount;
+
+
+                    } else {
+
+                        expr.upperLidInner =
+                            originalUpperInner;
+
+
+                        expr.upperLidOuter =
+                            originalUpperOuter;
+                    }
+
+
+                    updateMainCanvas();
+
+
+                    if (
+                        step >= 4
+                    ) {
+
+                        clearInterval(
+                            blinkInterval
+                        );
+                    }
+
+                },
+                50
+            );
+
+
+        return;
+    }
+
+
+    render(
+        mainCtx,
+        temp
+    );
+
+
+    if (
+        liveSyncToggle.checked
+    ) {
+
+        sendToMoMo();
+    }
+
+
+    animationTimer =
+        setTimeout(
+            updateMainCanvas,
+            1000
+        );
+}
+
+
+// =====================================================
+// DEBOUNCED SEND
+// =====================================================
+
+function debouncedSend() {
+
+    if (debounceTimer) {
+
+        clearTimeout(
+            debounceTimer
+        );
+    }
+
+
+    debounceTimer =
+        setTimeout(
+            () => {
+
+                sendToMoMo();
+
+            },
+            120
+        );
+}
+
+
+// =====================================================
+// SEND TO ESP32
+// =====================================================
 
 function sendToMoMo() {
-    alert("PARAMETERS SAVED TO ESP32 MEMORY.");
+
+    const status =
+        document.getElementById(
+            "statusText"
+        );
+
+
+    const ip =
+        espIpInput.value.trim();
+
+
+    status.textContent =
+        "SENDING TO ESP32...";
+
+
+    fetch(
+        `${ip}/set_expression`,
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body:
+                JSON.stringify(
+                    expr
+                ),
+
+            mode: "cors"
+        }
+    )
+    .then(
+        response => {
+
+            if (
+                !response.ok
+            ) {
+
+                throw new Error(
+                    "ESP32 returned HTTP " +
+                    response.status
+                );
+            }
+
+
+            status.textContent =
+                "STATUS: SENT TO ESP32!";
+        }
+    )
+    .catch(
+        error => {
+
+            console.error(
+                "ESP32 sync error:",
+                error
+            );
+
+
+            status.textContent =
+                "STATUS: ESP32 OFFLINE (LOCAL ONLY)";
+        }
+    );
 }
 
-createPresetCards();
-selectPreset("neutral");
+
+// =====================================================
+// INITIALIZE
+// =====================================================
+
+buildPresetCards();
+
+updateMainCanvas();
+
 </script>
 
 </body>
