@@ -55,8 +55,13 @@ def send_command(command):
 # =====================================================
 
 KEYS = {
-    "0": "0",
-    "3": "3",
+    "0": "0",   # Normal eyes
+    "1": "1",   # Calendar
+    "2": "2",   # Time / Date
+    "3": "3",   # Spotify
+    "4": "4",   # Pomodoro Start / Pause
+    "5": "5",   # Pomodoro Reset
+    "6": "6",   # Pomodoro Screen
 }
 
 
@@ -85,7 +90,12 @@ def start_keyboard():
     print("==================================")
     print()
     print("0 → Normal eyes")
+    print("1 → Calendar")
+    print("2 → Time / Date")
     print("3 → Spotify")
+    print("4 → Pomodoro Start / Pause")
+    print("5 → Pomodoro Reset")
+    print("6 → Pomodoro Screen")
     print("CTRL+C → Stop")
     print()
 

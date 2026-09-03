@@ -4,7 +4,9 @@
 #include <Adafruit_SSD1306.h>
 #include <WiFi.h>
 #include <WebServer.h>
+#include <time.h>
 
+#include "Pomodoro.h"
 #include "EyeEngine.h"
 #include "AnimationEngine.h"
 #include "ExpressionEngine.h"
@@ -41,12 +43,14 @@ Adafruit_SSD1306 display(
 EyeEngine eyes(&display);
 AnimationEngine animation(&eyes);
 ExpressionEngine expressions(&eyes);
+Pomodoro pomodoro;
 
 // =====================================================
 // Current Expression
 // =====================================================
 
-Expression currentExpression = EXPRESSION_NEUTRAL;
+Expression currentExpression =
+    EXPRESSION_NEUTRAL;
 
 // =====================================================
 // Current Expression Eye States
@@ -54,6 +58,15 @@ Expression currentExpression = EXPRESSION_NEUTRAL;
 
 EyeState baseLeft;
 EyeState baseRight;
+
+// =====================================================
+// Display Modes
+// =====================================================
+
+bool spotifyMode = false;
+bool calendarMode = false;
+bool clockMode = false;
+bool pomodoroMode = false;
 
 // =====================================================
 // Spotify State
@@ -68,16 +81,14 @@ bool spotifyPlaying = false;
 unsigned long spotifyProgress = 0;
 unsigned long spotifyDuration = 0;
 
-// Time when latest Spotify update was received
 unsigned long spotifyLastSync = 0;
-
-bool spotifyMode = false;
 
 // =====================================================
 // Get Current Expression State
 // =====================================================
 
 void updateBaseExpression() {
+
     expressions.getExpressionStates(
         currentExpression,
         baseLeft,
@@ -94,7 +105,9 @@ void animateEyeMovement(
     EyeState targetRight,
     unsigned long duration
 ) {
-    MouthState currentMouth = eyes.getMouth();
+
+    MouthState currentMouth =
+        eyes.getMouth();
 
     animation.moveTo(
         targetLeft,
@@ -104,7 +117,9 @@ void animateEyeMovement(
     );
 
     while (animation.isAnimating()) {
+
         animation.update();
+
         delay(16);
     }
 }
@@ -114,6 +129,7 @@ void animateEyeMovement(
 // =====================================================
 
 void returnToExpression() {
+
     animateEyeMovement(
         baseLeft,
         baseRight,
@@ -126,6 +142,7 @@ void returnToExpression() {
 // =====================================================
 
 void lookLeft() {
+
     EyeState targetLeft = baseLeft;
     EyeState targetRight = baseRight;
 
@@ -144,6 +161,7 @@ void lookLeft() {
 }
 
 void lookRight() {
+
     EyeState targetLeft = baseLeft;
     EyeState targetRight = baseRight;
 
@@ -162,6 +180,7 @@ void lookRight() {
 }
 
 void lookUp() {
+
     EyeState targetLeft = baseLeft;
     EyeState targetRight = baseRight;
 
@@ -180,6 +199,7 @@ void lookUp() {
 }
 
 void lookDown() {
+
     EyeState targetLeft = baseLeft;
     EyeState targetRight = baseRight;
 
@@ -202,8 +222,12 @@ void lookDown() {
 // =====================================================
 
 void blink() {
-    EyeState closedLeft = eyes.getLeftEye();
-    EyeState closedRight = eyes.getRightEye();
+
+    EyeState closedLeft =
+        eyes.getLeftEye();
+
+    EyeState closedRight =
+        eyes.getRightEye();
 
     closedLeft.height = 4;
     closedRight.height = 4;
@@ -211,9 +235,9 @@ void blink() {
     closedLeft.pupilSize = 0;
     closedRight.pupilSize = 0;
 
-    MouthState currentMouth = eyes.getMouth();
+    MouthState currentMouth =
+        eyes.getMouth();
 
-    // Close
     animation.moveTo(
         closedLeft,
         closedRight,
@@ -222,13 +246,14 @@ void blink() {
     );
 
     while (animation.isAnimating()) {
+
         animation.update();
+
         delay(16);
     }
 
     delay(60);
 
-    // Open
     animation.moveTo(
         baseLeft,
         baseRight,
@@ -237,7 +262,9 @@ void blink() {
     );
 
     while (animation.isAnimating()) {
+
         animation.update();
+
         delay(16);
     }
 }
@@ -250,6 +277,7 @@ void showExpression(
     Expression expression,
     unsigned long duration
 ) {
+
     EyeState targetLeft;
     EyeState targetRight;
 
@@ -272,14 +300,20 @@ void showExpression(
     );
 
     while (animation.isAnimating()) {
+
         animation.update();
+
         delay(16);
     }
 
-    currentExpression = expression;
+    currentExpression =
+        expression;
 
-    baseLeft = targetLeft;
-    baseRight = targetRight;
+    baseLeft =
+        targetLeft;
+
+    baseRight =
+        targetRight;
 
     expressions.setExpression(
         currentExpression
@@ -296,24 +330,20 @@ String truncateText(
     String text,
     int maxLength
 ) {
+
     if (text.length() <= maxLength) {
+
         return text;
     }
 
-    return text.substring(0, maxLength - 3) + "...";
+    return text.substring(
+        0,
+        maxLength - 3
+    ) + "...";
 }
 
 // =====================================================
 // Spotify Equalizer
-// =====================================================
-//
-// Playing:
-//     Animated bars
-//
-// Paused:
-//     Static bars
-//
-// This is a visual animation, not actual audio spectrum data.
 // =====================================================
 
 void drawSpotifyEqualizer() {
@@ -327,6 +357,7 @@ void drawSpotifyEqualizer() {
     const int maxHeight = 20;
 
     const uint8_t levels[barCount] = {
+
         4, 8, 13, 18,
         15, 10, 6, 11,
         17, 13, 8, 4
@@ -337,33 +368,45 @@ void drawSpotifyEqualizer() {
             ? (millis() / 120)
             : 0;
 
-    for (int i = 0; i < barCount; i++) {
+    for (
+        int i = 0;
+        i < barCount;
+        i++
+    ) {
 
         int level;
 
         if (spotifyPlaying) {
 
             int index =
-                (i + (frame % barCount))
+                (
+                    i +
+                    (frame % barCount)
+                )
                 % barCount;
 
-            level = levels[index];
+            level =
+                levels[index];
 
-            if (((frame / 2) + i) % 5 == 0) {
+            if (
+                ((frame / 2) + i) % 5 == 0
+            ) {
+
                 level += 3;
             }
 
         } else {
 
-            // Completely static while paused
-            level = levels[i];
+            level =
+                levels[i];
         }
 
-        level = constrain(
-            level,
-            2,
-            maxHeight
-        );
+        level =
+            constrain(
+                level,
+                2,
+                maxHeight
+            );
 
         int x =
             startX +
@@ -390,21 +433,27 @@ void drawSpotifyEqualizer() {
 unsigned long getDisplayProgress() {
 
     if (!spotifyPlaying) {
+
         return spotifyProgress;
     }
 
     if (spotifyDuration == 0) {
+
         return spotifyProgress;
     }
 
     unsigned long elapsed =
-        millis() - spotifyLastSync;
+        millis() -
+        spotifyLastSync;
 
     unsigned long progress =
-        spotifyProgress + elapsed;
+        spotifyProgress +
+        elapsed;
 
     if (progress > spotifyDuration) {
-        progress = spotifyDuration;
+
+        progress =
+            spotifyDuration;
     }
 
     return progress;
@@ -424,28 +473,35 @@ void drawSpotifyScreen() {
 
     display.setTextSize(1);
 
-    // =================================================
-    // Nothing Playing
-    // =================================================
-
     if (spotifySong.length() == 0) {
 
-        display.setCursor(0, 0);
-        display.println("SPOTIFY");
+        display.setCursor(
+            0,
+            0
+        );
 
-        display.setCursor(0, 18);
-        display.println("Nothing playing");
+        display.println(
+            "SPOTIFY"
+        );
+
+        display.setCursor(
+            0,
+            18
+        );
+
+        display.println(
+            "Nothing playing"
+        );
 
         display.display();
 
         return;
     }
 
-    // =================================================
-    // Song
-    // =================================================
-
-    display.setCursor(0, 0);
+    display.setCursor(
+        0,
+        0
+    );
 
     display.println(
         truncateText(
@@ -454,11 +510,10 @@ void drawSpotifyScreen() {
         )
     );
 
-    // =================================================
-    // Artist
-    // =================================================
-
-    display.setCursor(0, 10);
+    display.setCursor(
+        0,
+        10
+    );
 
     display.println(
         truncateText(
@@ -467,27 +522,21 @@ void drawSpotifyScreen() {
         )
     );
 
-    // =================================================
-    // Playing / Paused Indicator
-    // =================================================
-
-    display.setCursor(118, 0);
+    display.setCursor(
+        118,
+        0
+    );
 
     if (spotifyPlaying) {
+
         display.print(">");
+
     } else {
+
         display.print("||");
     }
 
-    // =================================================
-    // Equalizer
-    // =================================================
-
     drawSpotifyEqualizer();
-
-    // =================================================
-    // Progress
-    // =================================================
 
     unsigned long progress =
         getDisplayProgress();
@@ -512,11 +561,12 @@ void drawSpotifyScreen() {
             progress /
             spotifyDuration;
 
-        fillWidth = constrain(
-            fillWidth,
-            0,
-            barWidth - 2
-        );
+        fillWidth =
+            constrain(
+                fillWidth,
+                0,
+                barWidth - 2
+            );
 
         if (fillWidth > 0) {
 
@@ -529,10 +579,6 @@ void drawSpotifyScreen() {
             );
         }
     }
-
-    // =================================================
-    // Time
-    // =================================================
 
     unsigned long progressSeconds =
         progress / 1000;
@@ -552,33 +598,482 @@ void drawSpotifyScreen() {
     unsigned long durationRemaining =
         durationSeconds % 60;
 
-    display.setCursor(0, 57);
+    display.setCursor(
+        0,
+        57
+    );
 
     if (progressMinutes < 10)
         display.print("0");
 
-    display.print(progressMinutes);
+    display.print(
+        progressMinutes
+    );
 
     display.print(":");
 
     if (progressRemaining < 10)
         display.print("0");
 
-    display.print(progressRemaining);
+    display.print(
+        progressRemaining
+    );
 
-    display.print(" / ");
+    display.print(
+        " / "
+    );
 
     if (durationMinutes < 10)
         display.print("0");
 
-    display.print(durationMinutes);
+    display.print(
+        durationMinutes
+    );
 
     display.print(":");
 
     if (durationRemaining < 10)
         display.print("0");
 
-    display.print(durationRemaining);
+    display.print(
+        durationRemaining
+    );
+
+    display.display();
+}
+
+// =====================================================
+// Draw Calendar Screen
+// =====================================================
+
+void drawCalendarScreen() {
+
+    struct tm timeInfo;
+
+    if (!getLocalTime(&timeInfo)) {
+
+        display.clearDisplay();
+
+        display.setTextColor(
+            SSD1306_WHITE
+        );
+
+        display.setTextSize(1);
+
+        display.setCursor(
+            38,
+            25
+        );
+
+        display.println(
+            "Loading..."
+        );
+
+        display.display();
+
+        return;
+    }
+
+    int year =
+        timeInfo.tm_year + 1900;
+
+    int month =
+        timeInfo.tm_mon;
+
+    int today =
+        timeInfo.tm_mday;
+
+    const int daysInMonth[] = {
+
+        31,
+        28,
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31
+    };
+
+    int totalDays =
+        daysInMonth[month];
+
+    if (
+        month == 1 &&
+        (
+            (year % 400 == 0) ||
+            (
+                year % 4 == 0 &&
+                year % 100 != 0
+            )
+        )
+    ) {
+
+        totalDays = 29;
+    }
+
+    struct tm firstDay = timeInfo;
+
+    firstDay.tm_mday = 1;
+    firstDay.tm_hour = 12;
+    firstDay.tm_min = 0;
+    firstDay.tm_sec = 0;
+
+    mktime(&firstDay);
+
+    int firstWeekday =
+        firstDay.tm_wday;
+
+    const char* monthNames[] = {
+
+        "JANUARY",
+        "FEBRUARY",
+        "MARCH",
+        "APRIL",
+        "MAY",
+        "JUNE",
+        "JULY",
+        "AUGUST",
+        "SEPTEMBER",
+        "OCTOBER",
+        "NOVEMBER",
+        "DECEMBER"
+    };
+
+    display.clearDisplay();
+
+    display.setTextColor(
+        SSD1306_WHITE
+    );
+
+    display.setTextSize(1);
+
+    String header =
+        String(monthNames[month]) +
+        " " +
+        String(year);
+
+    int headerWidth =
+        header.length() * 6;
+
+    int headerX =
+        (128 - headerWidth) / 2;
+
+    display.setCursor(
+        headerX,
+        0
+    );
+
+    display.println(
+        header
+    );
+
+    display.setCursor(
+        25,
+        10
+    );
+
+    display.print(
+        "S M T W T F S"
+    );
+
+    const int startX = 22;
+    const int startY = 20;
+
+    const int cellWidth = 15;
+    const int cellHeight = 8;
+
+    for (
+        int day = 1;
+        day <= totalDays;
+        day++
+    ) {
+
+        int position =
+            firstWeekday +
+            (day - 1);
+
+        int column =
+            position % 7;
+
+        int row =
+            position / 7;
+
+        int x =
+            startX +
+            column * cellWidth;
+
+        int y =
+            startY +
+            row * cellHeight;
+
+        if (day == today) {
+
+            display.fillRoundRect(
+                x - 1,
+                y - 1,
+                13,
+                8,
+                2,
+                SSD1306_WHITE
+            );
+
+            display.setTextColor(
+                SSD1306_BLACK
+            );
+
+        } else {
+
+            display.setTextColor(
+                SSD1306_WHITE
+            );
+        }
+
+        if (day < 10) {
+
+            display.setCursor(
+                x + 3,
+                y
+            );
+
+        } else {
+
+            display.setCursor(
+                x,
+                y
+            );
+        }
+
+        display.print(
+            day
+        );
+
+        display.setTextColor(
+            SSD1306_WHITE
+        );
+    }
+
+    display.display();
+}
+
+// =====================================================
+// Draw Clock Screen
+// =====================================================
+
+void drawClockScreen() {
+
+    struct tm timeInfo;
+
+    if (!getLocalTime(&timeInfo)) {
+
+        display.clearDisplay();
+
+        display.setTextColor(
+            SSD1306_WHITE
+        );
+
+        display.setTextSize(1);
+
+        display.setCursor(
+            42,
+            25
+        );
+
+        display.println(
+            "Loading..."
+        );
+
+        display.display();
+
+        return;
+    }
+
+    display.clearDisplay();
+
+    display.setTextColor(
+        SSD1306_WHITE
+    );
+
+    char timeString[12];
+
+    strftime(
+        timeString,
+        sizeof(timeString),
+        "%I:%M %p",
+        &timeInfo
+    );
+
+    display.setTextSize(2);
+
+    int timeWidth =
+        strlen(timeString) * 12;
+
+    int timeX =
+        (128 - timeWidth) / 2;
+
+    display.setCursor(
+        timeX,
+        4
+    );
+
+    display.println(
+        timeString
+    );
+
+    char dayString[15];
+
+    strftime(
+        dayString,
+        sizeof(dayString),
+        "%A",
+        &timeInfo
+    );
+
+    display.setTextSize(1);
+
+    int dayWidth =
+        strlen(dayString) * 6;
+
+    int dayX =
+        (128 - dayWidth) / 2;
+
+    display.setCursor(
+        dayX,
+        30
+    );
+
+    display.println(
+        dayString
+    );
+
+    char dateString[20];
+
+    strftime(
+        dateString,
+        sizeof(dateString),
+        "%d %b %Y",
+        &timeInfo
+    );
+
+    int dateWidth =
+        strlen(dateString) * 6;
+
+    int dateX =
+        (128 - dateWidth) / 2;
+
+    display.setCursor(
+        dateX,
+        45
+    );
+
+    display.println(
+        dateString
+    );
+
+    display.display();
+}
+
+// =====================================================
+// Draw Pomodoro Screen
+// =====================================================
+
+void drawPomodoroScreen() {
+
+    display.clearDisplay();
+
+    display.setTextColor(
+        SSD1306_WHITE
+    );
+
+    display.setTextSize(1);
+
+    const char* title;
+
+    if (
+        pomodoro.getState() ==
+        POMODORO_FOCUS
+    ) {
+
+        title = "FOCUS";
+
+    } else {
+
+        title = "BREAK";
+    }
+
+    int titleWidth =
+        strlen(title) * 6;
+
+    display.setCursor(
+        (128 - titleWidth) / 2,
+        0
+    );
+
+    display.println(
+        title
+    );
+
+    unsigned long totalSeconds =
+        pomodoro.getRemainingSeconds();
+
+    unsigned long minutes =
+        totalSeconds / 60;
+
+    unsigned long seconds =
+        totalSeconds % 60;
+
+    char timerString[6];
+
+    snprintf(
+        timerString,
+        sizeof(timerString),
+        "%02lu:%02lu",
+        minutes,
+        seconds
+    );
+
+    display.setTextSize(3);
+
+    int timerWidth =
+        strlen(timerString) * 18;
+
+    display.setCursor(
+        (128 - timerWidth) / 2,
+        18
+    );
+
+    display.println(
+        timerString
+    );
+
+    display.setTextSize(1);
+
+    const char* status;
+
+    if (pomodoro.isRunning()) {
+
+        status = "RUNNING";
+
+    } else {
+
+        status = "PAUSED";
+    }
+
+    int statusWidth =
+        strlen(status) * 6;
+
+    display.setCursor(
+        (128 - statusWidth) / 2,
+        50
+    );
+
+    display.println(
+        status
+    );
 
     display.display();
 }
@@ -591,16 +1086,88 @@ void exitSpotifyMode() {
 
     spotifyMode = false;
 
-    spotifySong = "";
-    spotifyArtist = "";
-    spotifyAlbum = "";
+    expressions.setExpression(
+        currentExpression
+    );
 
-    spotifyPlaying = false;
+    eyes.setEyes(
+        baseLeft,
+        baseRight
+    );
 
-    spotifyProgress = 0;
-    spotifyDuration = 0;
+    eyes.draw();
+}
 
-    spotifyLastSync = 0;
+// =====================================================
+// Exit Calendar Mode
+// =====================================================
+
+void exitCalendarMode() {
+
+    calendarMode = false;
+
+    expressions.setExpression(
+        currentExpression
+    );
+
+    eyes.setEyes(
+        baseLeft,
+        baseRight
+    );
+
+    eyes.draw();
+}
+
+// =====================================================
+// Exit Clock Mode
+// =====================================================
+
+void exitClockMode() {
+
+    clockMode = false;
+
+    expressions.setExpression(
+        currentExpression
+    );
+
+    eyes.setEyes(
+        baseLeft,
+        baseRight
+    );
+
+    eyes.draw();
+}
+
+// =====================================================
+// Exit Pomodoro Mode
+// =====================================================
+
+void exitPomodoroMode() {
+
+    pomodoroMode = false;
+
+    expressions.setExpression(
+        currentExpression
+    );
+
+    eyes.setEyes(
+        baseLeft,
+        baseRight
+    );
+
+    eyes.draw();
+}
+
+// =====================================================
+// Return To Normal Mode
+// =====================================================
+
+void returnToNormalMode() {
+
+    spotifyMode = false;
+    calendarMode = false;
+    clockMode = false;
+    pomodoroMode = false;
 
     expressions.setExpression(
         currentExpression
@@ -627,61 +1194,95 @@ void updateSpotifyData(
     unsigned long duration
 ) {
 
-    spotifySong = song;
-    spotifyArtist = artist;
-    spotifyAlbum = album;
+    spotifySong =
+        song;
 
-    spotifyPlaying = playing;
+    spotifyArtist =
+        artist;
 
-    spotifyProgress = progress;
-    spotifyDuration = duration;
+    spotifyAlbum =
+        album;
 
-    spotifyLastSync = millis();
+    spotifyPlaying =
+        playing;
 
-    spotifyMode = true;
+    spotifyProgress =
+        progress;
 
-    drawSpotifyScreen();
+    spotifyDuration =
+        duration;
+
+    spotifyLastSync =
+        millis();
+
+    if (spotifyMode) {
+
+        drawSpotifyScreen();
+    }
 
     Serial.println();
-    Serial.println("========== SPOTIFY ==========");
 
-    Serial.print("Song     : ");
-    Serial.println(spotifySong);
+    Serial.println(
+        "========== SPOTIFY =========="
+    );
 
-    Serial.print("Artist   : ");
-    Serial.println(spotifyArtist);
+    Serial.print(
+        "Song     : "
+    );
 
-    Serial.print("Album    : ");
-    Serial.println(spotifyAlbum);
+    Serial.println(
+        spotifySong
+    );
 
-    Serial.print("Playing  : ");
+    Serial.print(
+        "Artist   : "
+    );
+
+    Serial.println(
+        spotifyArtist
+    );
+
+    Serial.print(
+        "Album    : "
+    );
+
+    Serial.println(
+        spotifyAlbum
+    );
+
+    Serial.print(
+        "Playing  : "
+    );
+
     Serial.println(
         spotifyPlaying
             ? "TRUE"
             : "FALSE"
     );
 
-    Serial.print("Progress : ");
-    Serial.print(spotifyProgress);
-    Serial.print(" / ");
-    Serial.println(spotifyDuration);
+    Serial.print(
+        "Progress : "
+    );
 
-    Serial.println("=============================");
+    Serial.print(
+        spotifyProgress
+    );
+
+    Serial.print(
+        " / "
+    );
+
+    Serial.println(
+        spotifyDuration
+    );
+
+    Serial.println(
+        "============================="
+    );
 }
 
 // =====================================================
 // Spotify GET Endpoint
-// =====================================================
-//
-// This is the important fix.
-//
-// Your Python bridge sends:
-//
-// /spotify?song=Waves&artist=Joey+Bada%24%24
-// &playing=true
-// &progress=119458
-// &duration=211630
-//
 // =====================================================
 
 void handleSpotifyGET() {
@@ -690,10 +1291,6 @@ void handleSpotifyGET() {
         "Access-Control-Allow-Origin",
         "*"
     );
-
-    // -------------------------------------------------
-    // Validate parameters
-    // -------------------------------------------------
 
     if (
         !server.hasArg("song") ||
@@ -712,10 +1309,6 @@ void handleSpotifyGET() {
         return;
     }
 
-    // -------------------------------------------------
-    // Read parameters
-    // -------------------------------------------------
-
     String song =
         server.arg("song");
 
@@ -731,16 +1324,13 @@ void handleSpotifyGET() {
     unsigned long duration =
         server.arg("duration").toInt();
 
-    // Album is optional for GET
     String album = "";
 
     if (server.hasArg("album")) {
-        album = server.arg("album");
-    }
 
-    // -------------------------------------------------
-    // Update Spotify
-    // -------------------------------------------------
+        album =
+            server.arg("album");
+    }
 
     updateSpotifyData(
         song,
@@ -751,10 +1341,6 @@ void handleSpotifyGET() {
         duration
     );
 
-    // -------------------------------------------------
-    // Response
-    // -------------------------------------------------
-
     server.send(
         200,
         "text/plain",
@@ -764,10 +1350,6 @@ void handleSpotifyGET() {
 
 // =====================================================
 // Spotify POST Endpoint
-// =====================================================
-//
-// Kept for compatibility if we later switch the Python
-// bridge to JSON POST requests.
 // =====================================================
 
 void handleSpotifyPOST() {
@@ -792,12 +1374,14 @@ void handleSpotifyPOST() {
         server.arg("plain");
 
     Serial.println();
-    Serial.println("===== Spotify POST =====");
-    Serial.println(body);
 
-    // -------------------------------------------------
-    // Extract String
-    // -------------------------------------------------
+    Serial.println(
+        "===== Spotify POST ====="
+    );
+
+    Serial.println(
+        body
+    );
 
     auto extractString =
         [&](const String& key) -> String {
@@ -844,10 +1428,6 @@ void handleSpotifyPOST() {
             );
         };
 
-    // -------------------------------------------------
-    // Extract Number
-    // -------------------------------------------------
-
     auto extractNumber =
         [&](const String& key) -> unsigned long {
 
@@ -876,15 +1456,18 @@ void handleSpotifyPOST() {
                 start < body.length() &&
                 body[start] == ' '
             ) {
+
                 start++;
             }
 
-            int end = start;
+            int end =
+                start;
 
             while (
                 end < body.length() &&
                 isDigit(body[end])
             ) {
+
                 end++;
             }
 
@@ -893,10 +1476,6 @@ void handleSpotifyPOST() {
                 end
             ).toInt();
         };
-
-    // -------------------------------------------------
-    // Extract Data
-    // -------------------------------------------------
 
     String song =
         extractString("name");
@@ -913,7 +1492,8 @@ void handleSpotifyPOST() {
     unsigned long duration =
         extractNumber("duration_ms");
 
-    bool playing = false;
+    bool playing =
+        false;
 
     int playingIndex =
         body.indexOf(
@@ -965,10 +1545,6 @@ void handleSpotifyPOST() {
 
 void setupRouting() {
 
-    // =================================================
-    // ACTION OPTIONS
-    // =================================================
-
     server.on(
         "/action",
         HTTP_OPTIONS,
@@ -993,10 +1569,6 @@ void setupRouting() {
         }
     );
 
-    // =================================================
-    // SPOTIFY OPTIONS
-    // =================================================
-
     server.on(
         "/spotify",
         HTTP_OPTIONS,
@@ -1021,33 +1593,17 @@ void setupRouting() {
         }
     );
 
-    // =================================================
-    // SPOTIFY GET
-    // =================================================
-    //
-    // This matches your current spotify.py
-    //
-    // =================================================
-
     server.on(
         "/spotify",
         HTTP_GET,
         handleSpotifyGET
     );
 
-    // =================================================
-    // SPOTIFY POST
-    // =================================================
-
     server.on(
         "/spotify",
         HTTP_POST,
         handleSpotifyPOST
     );
-
-    // =================================================
-    // ACTION GET
-    // =================================================
 
     server.on(
         "/action",
@@ -1080,7 +1636,9 @@ void setupRouting() {
                 "API Command Received: "
             );
 
-            Serial.println(cmd);
+            Serial.println(
+                cmd
+            );
 
             // =========================================
             // Expressions
@@ -1088,7 +1646,7 @@ void setupRouting() {
 
             if (cmd == "HAPPY") {
 
-                exitSpotifyMode();
+                returnToNormalMode();
 
                 showExpression(
                     EXPRESSION_HAPPY,
@@ -1098,7 +1656,7 @@ void setupRouting() {
 
             else if (cmd == "SAD") {
 
-                exitSpotifyMode();
+                returnToNormalMode();
 
                 showExpression(
                     EXPRESSION_SAD,
@@ -1108,7 +1666,7 @@ void setupRouting() {
 
             else if (cmd == "ANGRY") {
 
-                exitSpotifyMode();
+                returnToNormalMode();
 
                 showExpression(
                     EXPRESSION_ANGRY,
@@ -1121,7 +1679,7 @@ void setupRouting() {
                 cmd == "SHOCK"
             ) {
 
-                exitSpotifyMode();
+                returnToNormalMode();
 
                 showExpression(
                     EXPRESSION_SURPRISED,
@@ -1131,7 +1689,7 @@ void setupRouting() {
 
             else if (cmd == "SLEEPY") {
 
-                exitSpotifyMode();
+                returnToNormalMode();
 
                 showExpression(
                     EXPRESSION_SLEEPY,
@@ -1144,7 +1702,7 @@ void setupRouting() {
                 cmd == "RESET"
             ) {
 
-                exitSpotifyMode();
+                returnToNormalMode();
 
                 showExpression(
                     EXPRESSION_NEUTRAL,
@@ -1161,8 +1719,15 @@ void setupRouting() {
                 cmd == "LEFT"
             ) {
 
-                if (!spotifyMode)
+                if (
+                    !spotifyMode &&
+                    !calendarMode &&
+                    !clockMode &&
+                    !pomodoroMode
+                ) {
+
                     lookLeft();
+                }
             }
 
             else if (
@@ -1170,8 +1735,15 @@ void setupRouting() {
                 cmd == "RIGHT"
             ) {
 
-                if (!spotifyMode)
+                if (
+                    !spotifyMode &&
+                    !calendarMode &&
+                    !clockMode &&
+                    !pomodoroMode
+                ) {
+
                     lookRight();
+                }
             }
 
             else if (
@@ -1179,8 +1751,15 @@ void setupRouting() {
                 cmd == "UP"
             ) {
 
-                if (!spotifyMode)
+                if (
+                    !spotifyMode &&
+                    !calendarMode &&
+                    !clockMode &&
+                    !pomodoroMode
+                ) {
+
                     lookUp();
+                }
             }
 
             else if (
@@ -1188,8 +1767,15 @@ void setupRouting() {
                 cmd == "DOWN"
             ) {
 
-                if (!spotifyMode)
+                if (
+                    !spotifyMode &&
+                    !calendarMode &&
+                    !clockMode &&
+                    !pomodoroMode
+                ) {
+
                     lookDown();
+                }
             }
 
             else if (
@@ -1197,8 +1783,50 @@ void setupRouting() {
                 cmd == "WINK"
             ) {
 
-                if (!spotifyMode)
+                if (
+                    !spotifyMode &&
+                    !calendarMode &&
+                    !clockMode &&
+                    !pomodoroMode
+                ) {
+
                     blink();
+                }
+            }
+
+            // =========================================
+            // Calendar
+            // =========================================
+
+            else if (
+                cmd == "CALENDAR" ||
+                cmd == "1"
+            ) {
+
+                spotifyMode = false;
+                clockMode = false;
+                pomodoroMode = false;
+                calendarMode = true;
+
+                drawCalendarScreen();
+            }
+
+            // =========================================
+            // Clock / Time
+            // =========================================
+
+            else if (
+                cmd == "TIME" ||
+                cmd == "CLOCK" ||
+                cmd == "2"
+            ) {
+
+                spotifyMode = false;
+                calendarMode = false;
+                pomodoroMode = false;
+                clockMode = true;
+
+                drawClockScreen();
             }
 
             // =========================================
@@ -1210,9 +1838,67 @@ void setupRouting() {
                 cmd == "3"
             ) {
 
+                calendarMode = false;
+                clockMode = false;
+                pomodoroMode = false;
                 spotifyMode = true;
 
                 drawSpotifyScreen();
+            }
+
+            // =========================================
+            // Pomodoro Screen
+            // =========================================
+
+            else if (
+                cmd == "POMODORO" ||
+                cmd == "6"
+            ) {
+
+                spotifyMode = false;
+                calendarMode = false;
+                clockMode = false;
+                pomodoroMode = true;
+
+                drawPomodoroScreen();
+            }
+
+            // =========================================
+            // Pomodoro Start / Pause
+            // =========================================
+
+            else if (
+                cmd == "POMODORO_START" ||
+                cmd == "4"
+            ) {
+
+                spotifyMode = false;
+                calendarMode = false;
+                clockMode = false;
+                pomodoroMode = true;
+
+                pomodoro.startPause();
+
+                drawPomodoroScreen();
+            }
+
+            // =========================================
+            // Pomodoro Reset
+            // =========================================
+
+            else if (
+                cmd == "POMODORO_RESET" ||
+                cmd == "5"
+            ) {
+
+                spotifyMode = false;
+                calendarMode = false;
+                clockMode = false;
+                pomodoroMode = true;
+
+                pomodoro.reset();
+
+                drawPomodoroScreen();
             }
 
             // =========================================
@@ -1224,20 +1910,28 @@ void setupRouting() {
                 cmd == "0"
             ) {
 
-                exitSpotifyMode();
+                returnToNormalMode();
 
                 Serial.println(
                     "Switched to NULL / normal eyes."
                 );
             }
 
+            // =========================================
+            // Exit Spotify
+            // =========================================
+
             else if (
                 cmd == "EXIT_SPOTIFY" ||
                 cmd == "EXIT"
             ) {
 
-                exitSpotifyMode();
+                returnToNormalMode();
             }
+
+            // =========================================
+            // Unknown Command
+            // =========================================
 
             else {
 
@@ -1255,7 +1949,8 @@ void setupRouting() {
             server.send(
                 200,
                 "text/plain",
-                "Command Executed: " + cmd
+                "Command Executed: " +
+                cmd
             );
         }
     );
@@ -1294,6 +1989,7 @@ void setup() {
         );
 
         while (true) {
+
             delay(1000);
         }
     }
@@ -1310,7 +2006,9 @@ void setup() {
         "Connecting to Wi-Fi"
     );
 
-    WiFi.mode(WIFI_STA);
+    WiFi.mode(
+        WIFI_STA
+    );
 
     WiFi.disconnect();
 
@@ -1364,6 +2062,21 @@ void setup() {
         );
 
         WiFi.setSleep(false);
+
+        // =================================================
+        // NTP Time Synchronization - IST
+        // =================================================
+
+        configTime(
+            19800,
+            0,
+            "pool.ntp.org",
+            "time.nist.gov"
+        );
+
+        Serial.println(
+            "NTP time synchronization started."
+        );
     }
 
     // =================================================
@@ -1407,6 +2120,77 @@ void loop() {
     server.handleClient();
 
     // =================================================
+    // Calendar Mode
+    // =================================================
+
+    if (calendarMode) {
+
+        static unsigned long lastCalendarFrame = 0;
+
+        if (
+            millis() - lastCalendarFrame >= 1000
+        ) {
+
+            drawCalendarScreen();
+
+            lastCalendarFrame =
+                millis();
+        }
+
+        delay(5);
+
+        return;
+    }
+
+    // =================================================
+    // Clock Mode
+    // =================================================
+
+    if (clockMode) {
+
+        static unsigned long lastClockFrame = 0;
+
+        if (
+            millis() - lastClockFrame >= 500
+        ) {
+
+            drawClockScreen();
+
+            lastClockFrame =
+                millis();
+        }
+
+        delay(5);
+
+        return;
+    }
+
+    // =================================================
+    // Pomodoro Mode
+    // =================================================
+
+    if (pomodoroMode) {
+
+        static unsigned long lastPomodoroFrame = 0;
+
+        pomodoro.update();
+
+        if (
+            millis() - lastPomodoroFrame >= 500
+        ) {
+
+            drawPomodoroScreen();
+
+            lastPomodoroFrame =
+                millis();
+        }
+
+        delay(5);
+
+        return;
+    }
+
+    // =================================================
     // Spotify Mode
     // =================================================
 
@@ -1439,10 +2223,6 @@ void loop() {
     unsigned long now =
         millis();
 
-    // =================================================
-    // Idle Blink
-    // =================================================
-
     if (
         now - lastBlink > 3500
     ) {
@@ -1453,10 +2233,6 @@ void loop() {
             millis();
     }
 
-    // =================================================
-    // Idle Eye Movement
-    // =================================================
-
     if (
         now - lastLook > 7000
     ) {
@@ -1465,18 +2241,22 @@ void loop() {
             random(0, 4);
 
         if (movement == 0) {
+
             lookLeft();
         }
 
         else if (movement == 1) {
+
             lookRight();
         }
 
         else if (movement == 2) {
+
             lookUp();
         }
 
         else {
+
             lookDown();
         }
 
