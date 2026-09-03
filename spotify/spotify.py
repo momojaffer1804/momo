@@ -8,7 +8,7 @@ from spotify_client import get_current_track
 # Configuration
 # =====================================================
 
-ESP32_IP = "10.164.92.49"  # CHANGE THIS
+ESP32_IP = "10.164.92.49"
 ESP32_PORT = 80
 
 UPDATE_INTERVAL = 2
@@ -42,6 +42,7 @@ def send_to_esp32(track):
         )
 
         if response.status_code != 200:
+
             print(
                 f"ESP32 error: "
                 f"{response.status_code} "
@@ -50,11 +51,14 @@ def send_to_esp32(track):
 
     except requests.RequestException as error:
 
-        print(f"ESP32 connection error: {error}")
+        print(
+            f"ESP32 connection error: "
+            f"{error}"
+        )
 
 
 # =====================================================
-# Clear Spotify Screen
+# Clear Spotify Data
 # =====================================================
 
 def send_empty():
@@ -70,6 +74,7 @@ def send_empty():
     }
 
     try:
+
         requests.get(
             url,
             params=params,
@@ -77,6 +82,7 @@ def send_empty():
         )
 
     except requests.RequestException:
+
         pass
 
 
@@ -91,79 +97,118 @@ def monitor_spotify():
     print("       MoMo Spotify Display")
     print("==================================")
     print("Sending Spotify data to ESP32...")
-    print("Press CTRL+C to stop.")
+    print()
+    print("Keyboard controls are handled")
+    print("by controller/keyboard.py")
+    print()
+    print("CTRL+C → Stop")
     print()
 
     last_song = None
     last_playing = None
 
-    while True:
+    try:
 
-        try:
+        while True:
 
-            track = get_current_track()
+            try:
 
-            if track is None:
+                track = get_current_track()
 
-                if last_song is not None:
-                    print("\nNothing is currently playing.")
-                    send_empty()
+                if track is None:
 
-                last_song = None
-                last_playing = None
+                    if last_song is not None:
 
-            else:
+                        print(
+                            "\nNothing is currently playing."
+                        )
 
-                song_changed = (
-                    last_song != track["name"]
-                )
+                        send_empty()
 
-                state_changed = (
-                    last_playing != track["is_playing"]
-                )
+                    last_song = None
+                    last_playing = None
 
-                if song_changed or state_changed:
+                else:
 
-                    status = (
-                        "PLAYING"
-                        if track["is_playing"]
-                        else "PAUSED"
+                    song_changed = (
+                        last_song != track["name"]
                     )
 
-                    print()
-                    print("========== Spotify ==========")
-                    print(f"Song     : {track['name']}")
-                    print(f"Artist   : {track['artist']}")
-                    print(f"Album    : {track['album']}")
-                    print(f"Status   : {status}")
-                    print(
-                        f"Progress : "
-                        f"{track['progress_ms'] / 1000:.0f}s / "
-                        f"{track['duration_ms'] / 1000:.0f}s"
+                    state_changed = (
+                        last_playing != track["is_playing"]
                     )
-                    print("==============================")
 
-                    last_song = track["name"]
-                    last_playing = track["is_playing"]
+                    if song_changed or state_changed:
 
-                # Send state every 2 seconds.
-                # ESP32 handles animation locally.
-                send_to_esp32(track)
+                        status = (
+                            "PLAYING"
+                            if track["is_playing"]
+                            else "PAUSED"
+                        )
 
-            time.sleep(UPDATE_INTERVAL)
+                        print()
+                        print(
+                            "========== Spotify =========="
+                        )
 
-        except KeyboardInterrupt:
+                        print(
+                            f"Song     : "
+                            f"{track['name']}"
+                        )
 
-            print("\nSpotify display stopped.")
-            break
+                        print(
+                            f"Artist   : "
+                            f"{track['artist']}"
+                        )
 
-        except Exception as error:
+                        print(
+                            f"Album    : "
+                            f"{track['album']}"
+                        )
 
-            print()
-            print(f"Spotify error: {error}")
-            print("Retrying in 5 seconds...")
+                        print(
+                            f"Status   : "
+                            f"{status}"
+                        )
 
-            time.sleep(5)
+                        print(
+                            f"Progress : "
+                            f"{track['progress_ms'] / 1000:.0f}s / "
+                            f"{track['duration_ms'] / 1000:.0f}s"
+                        )
+
+                        print(
+                            "=============================="
+                        )
+
+                        last_song = track["name"]
+                        last_playing = track["is_playing"]
+
+                    # -----------------------------------------
+                    # Send Spotify state every 2 seconds
+                    # -----------------------------------------
+
+                    send_to_esp32(track)
+
+                time.sleep(UPDATE_INTERVAL)
+
+            except Exception as error:
+
+                print()
+                print(
+                    f"Spotify error: {error}"
+                )
+
+                print(
+                    "Retrying in 5 seconds..."
+                )
+
+                time.sleep(5)
+
+    except KeyboardInterrupt:
+
+        print()
+        print("Spotify display stopped.")
 
 
 # =====================================================
@@ -171,4 +216,5 @@ def monitor_spotify():
 # =====================================================
 
 if __name__ == "__main__":
+
     monitor_spotify()
