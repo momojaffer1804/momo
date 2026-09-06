@@ -37,7 +37,7 @@ private:
     unsigned long remainingSeconds;
     unsigned long lastUpdate;
 
-    // Selected timer durations
+    // Currently selected timer durations
     unsigned long focusSeconds;
     unsigned long breakSeconds;
 

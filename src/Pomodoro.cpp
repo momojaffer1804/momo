@@ -11,7 +11,10 @@ Pomodoro::Pomodoro() {
 
     state = POMODORO_FOCUS;
 
-    // Default timer: 50 min Focus / 10 min Break
+    // Default timer
+    // 50 minutes Focus
+    // 10 minutes Break
+
     focusSeconds = 50 * 60;
     breakSeconds = 10 * 60;
 
@@ -41,10 +44,12 @@ void Pomodoro::reset() {
 
     running = false;
 
-    // Always reset to Focus
+    // Always return to Focus
     state = POMODORO_FOCUS;
 
-    // Reset to the currently selected Focus time
+    // IMPORTANT:
+    // Reset uses the currently selected Focus time
+
     remainingSeconds = focusSeconds;
 
     lastUpdate = millis();
@@ -59,16 +64,21 @@ void Pomodoro::setTimer(unsigned long focusMinutes,
                          unsigned long breakMinutes) {
 
     // Convert minutes to seconds
+
     focusSeconds = focusMinutes * 60;
+
     breakSeconds = breakMinutes * 60;
 
-    // Stop timer
+    // Stop current timer
+
     running = false;
 
     // Start from Focus
+
     state = POMODORO_FOCUS;
 
-    // Set display to selected Focus time
+    // Show selected Focus time
+
     remainingSeconds = focusSeconds;
 
     lastUpdate = millis();
@@ -99,7 +109,7 @@ void Pomodoro::update() {
 
             switchPhase();
 
-        } 
+        }
         else {
 
             remainingSeconds -= elapsed;
@@ -116,15 +126,19 @@ void Pomodoro::switchPhase() {
 
     if (state == POMODORO_FOCUS) {
 
-        // Focus finished → Break
+        // Focus finished
+        // Start Break
+
         state = POMODORO_BREAK;
 
         remainingSeconds = breakSeconds;
 
-    } 
+    }
     else {
 
-        // Break finished → Focus
+        // Break finished
+        // Start Focus
+
         state = POMODORO_FOCUS;
 
         remainingSeconds = focusSeconds;
